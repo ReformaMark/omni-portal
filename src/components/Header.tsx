@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { SelectWithImages } from "./select-with-images"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { UserDropdown } from "./user-dropdown"
+import HomeAvatar from "./home-avatar"
 
 interface NavItem {
     title: string
@@ -34,13 +35,7 @@ export function Header() {
         <header className="border-b bg-white">
             <div className="flex h-16 items-center px-4 md:px-6">
                 <div className="flex items-center gap-4 ml-12">
-                    <Link href="/" className="flex items-center gap-2">
-                        <Avatar>
-                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                            <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                        <span className="text-lg font-semibold">OMNI Portal</span>
-                    </Link>
+                    <HomeAvatar />
                     <nav className="hidden md:flex items-center gap-12 ml-[120px]">
                         {navItems.map((item) => (
                             <Link
