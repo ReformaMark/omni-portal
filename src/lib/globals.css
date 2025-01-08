@@ -22,6 +22,11 @@ body {
     --popover-foreground: 240 10% 3.9%;
     --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
+    /* THEIR FIGMA COLOR PALLETES */
+    --dark: 216, 92%, 14%;
+    --darkGray: 210, 3%, 31%;
+    --lightGray: 0, 0%, 85%;
+    --gray: 0, 0%, 53%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
