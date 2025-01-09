@@ -1,8 +1,7 @@
+
 const AdminDashboardPage = () => {
     return (
-        <section
-            className="flex justify-center items-center min-h-screen h-full text-rose-500"
-        >
+        <section>
             Admin Dashboard
         </section>
     )

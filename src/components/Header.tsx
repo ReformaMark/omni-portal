@@ -1,16 +1,13 @@
 "use client"
 
-import * as React from "react"
+import { Bell, DownloadIcon } from 'lucide-react'
 import Link from "next/link"
-import { Bell, ChevronDown, DownloadIcon, User } from 'lucide-react'
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { SelectWithImages } from "./select-with-images"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from "./ui/dropdown-menu"
-import { UserDropdown } from "./user-dropdown"
+import { cn } from "@/lib/utils"
 import HomeAvatar from "./home-avatar"
+import { SelectWithImages } from "./select-with-images"
+import { UserDropdown } from "./user-dropdown"
 
 interface NavItem {
     title: string

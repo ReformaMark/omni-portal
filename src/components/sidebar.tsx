@@ -25,7 +25,7 @@ const sidebarItems: SidebarItem[] = [
     {
         icon: Package,
         label: "Inventory",
-        href: "/inventory"
+        href: "/admin/inventory"
     },
     {
         icon: Building2,
