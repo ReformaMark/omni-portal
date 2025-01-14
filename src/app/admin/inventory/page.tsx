@@ -14,9 +14,9 @@ const InventoryPage = () => {
 
     return (
         <section
-            className="flex flex-col justify-start items-center pt-8 min-h-screen h-full text-rose-500"
+            className="flex flex-col justify-start items-center pt-8 min-h-screen h-full"
         >
-            <div className="grid grid-cols-2 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 w-full px-[50px]">
                 <InventoryCard
                     count={126}
                     title="Total Properties"
@@ -38,9 +38,9 @@ const InventoryPage = () => {
                 />
             </div>
 
-            <div className="container mx-auto py-10 relative">
+            <div className="container mx-auto py-10 px-[50px] relative">
                 <Tabs defaultValue="all" className="w-full">
-                    <TabsList className="bg-lightGray text-gray absolute top-[64px]">
+                    <TabsList className="bg-lightGray text-gray absolute top-[15px] xl:top-[64px]">
                         <TabsTrigger value="all">All</TabsTrigger>
                         <TabsTrigger value="available">Available</TabsTrigger>
                         <TabsTrigger value="reserved">Reserved</TabsTrigger>

@@ -4,7 +4,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 const HomeAvatar = () => {
     return (
         <Link href="/" className="flex items-center gap-2">
-            <Avatar>
+            <Avatar
+                className="hidden md:block"
+            >
                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
                 <AvatarFallback>CN</AvatarFallback>
             </Avatar>

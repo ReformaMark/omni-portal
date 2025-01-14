@@ -50,7 +50,7 @@ export const InventoryActions = () => {
 
         // TODO: WHEN SUCCESS SEND API BACKEND THEN PROCEED TO FORM.RESET
         console.log(values)
-        
+
         form.reset()
         // toast?? can also add delay when submitting for decent animation
         setOpenAddModal(false)
@@ -58,21 +58,25 @@ export const InventoryActions = () => {
 
     return (
         <>
-            <Button
-                className="ml-2 text-gray"
-                variant="outline"
-                onClick={() => setOpenAddModal(true)}
+            <div
+                className="pr-[50px]"
             >
-                <PlusIcon className="w-9 h-9" />
-            </Button>
+                <Button
+                    className="ml-2 text-gray"
+                    variant="outline"
+                    onClick={() => setOpenAddModal(true)}
+                >
+                    <PlusIcon className="w-9 h-9" />
+                </Button>
 
-            <Button
-                className="ml-2 text-gray"
-                variant="outline"
-            // TODO: MAKE A CONFIRM MODAL COMPONENT FOR FASTER CONFIRMATION ACTIONS
-            >
-                <Trash2 className="w-9 h-9" />
-            </Button>
+                <Button
+                    className="ml-2 text-gray"
+                    variant="outline"
+                // TODO: MAKE A CONFIRM MODAL COMPONENT FOR FASTER CONFIRMATION ACTIONS
+                >
+                    <Trash2 className="w-9 h-9" />
+                </Button>
+            </div>
 
             <Dialog
                 open={openAddModal}

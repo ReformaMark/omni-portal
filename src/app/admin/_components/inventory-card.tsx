@@ -10,7 +10,7 @@ export const InventoryCard = ({
     title,
 }: InventoryCardProps) => {
     return (
-        <Card className="w-[370px] h-[125px] py-3">
+        <Card className="w-full h-full py-3">
             <CardContent className="flex flex-col gap-4">
                 <p className="text-muted-foreground text-sm">
                     {title}

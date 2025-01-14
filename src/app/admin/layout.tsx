@@ -1,6 +1,4 @@
-
-
-import { Header } from "@/components/Header"
+import { Header } from "@/components/header"
 import { AppSidebar } from "@/components/sidebar"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import "@/lib/globals.css"
@@ -32,7 +30,7 @@ export default function AdminLayout({
                 <SidebarProvider>
                     <div className="flex min-h-screen flex-col antialiased w-full">
                         <Header />
-                        <div className="flex flex-1">
+                        <div className="md:flex">
                             <AppSidebar />
                             <main className="flex-1">{children}</main>
                         </div>

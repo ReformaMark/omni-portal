@@ -1,13 +1,21 @@
 "use client"
 
-import { Bell, DownloadIcon } from 'lucide-react'
-import Link from "next/link"
-
 import { Button } from "@/components/ui/button"
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTrigger
+} from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
+import { Bell, DownloadIcon, MenuIcon } from 'lucide-react'
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import HomeAvatar from "./home-avatar"
 import { SelectWithImages } from "./select-with-images"
+import { sidebarItems } from './sidebar'
 import { UserDropdown } from "./user-dropdown"
+
 
 interface NavItem {
     title: string
@@ -28,9 +36,11 @@ const navItems: NavItem[] = [
 ]
 
 export function Header() {
+    const pathname = usePathname()
+
     return (
         <header className="border-b bg-white">
-            <div className="flex h-16 items-center px-4 md:px-6">
+            <div className="flex h-16 items-center max-md:justify-between px-4 md:px-6">
                 <div className="flex items-center gap-4 ml-12">
                     <HomeAvatar />
                     <nav className="hidden md:flex items-center gap-12 ml-[120px]">
@@ -71,6 +81,42 @@ export function Header() {
                         key={1}
                     />
                 </div>
+
+                {/* Sheet */}
+                <div className='ml-auto mr-7 lg:hidden'>
+                    <Sheet>
+                        <SheetTrigger>
+                            <MenuIcon className='w-6 h-6' />
+                        </SheetTrigger>
+                        <SheetContent>
+                            <SheetHeader>
+                                <section
+                                    className='bg-[#FFFFFF]'
+                                >
+                                    {sidebarItems.map((item) => (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            className={cn(
+                                                "w-full flex gap-2 justify-start hover:bg-gray-100 hover:rounded-[27px] py-3 px-4 cursor-pointer items-center",
+                                                item.href === pathname && "bg-gray-100 text-dark font-bold text-[16px] rounded-[27px]"
+                                            )}
+                                        >
+                                            <div className='flex items-center gap-2 ml-7'>
+                                                <item.icon className={cn(
+                                                    "h-5 w-5 text-[#A1A7AE]",
+                                                    item.href === pathname && "text-dark"
+                                                )} />
+                                                <span>{item.label}</span>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </section>
+                            </SheetHeader>
+                        </SheetContent>
+                    </Sheet>
+                </div>
+
             </div>
         </header>
     )

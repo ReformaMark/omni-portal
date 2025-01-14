@@ -15,7 +15,10 @@ export const BadgeStatus = ({ status }: { status: string }) => {
                             : "bg-[#FFD9B2] text-[#DD6109]"
             )}
         >
-            • {status}
+            <span className="mr-1">
+                •
+            </span>
+            {status}
         </Badge>
     )
 }
