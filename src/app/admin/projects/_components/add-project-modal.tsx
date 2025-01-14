@@ -12,13 +12,13 @@ import {
     FormItem,
     FormLabel,
     FormMessage
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { zodResolver } from "@hookform/resolvers/zod"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { CirclePlus, Upload } from "lucide-react";
 import Image from "next/image";
-import { FormEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -70,6 +70,8 @@ export const AddProjectModal = ({
         //     storageId,
         //     ...
         // })
+
+        console.log(values)
 
         setSelectedImage(null)
         imageInput.current!.value = "";
