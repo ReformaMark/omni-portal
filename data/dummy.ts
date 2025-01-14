@@ -1,3 +1,5 @@
+//inventory dummy
+
 export interface DummyType {
     lotId: number
     block: string

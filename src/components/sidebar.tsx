@@ -20,7 +20,7 @@ export const sidebarItems: SidebarItem[] = [
     {
         icon: FolderOpen,
         label: "Our Projects",
-        href: "/projects"
+        href: "/admin/projects"
     },
     {
         icon: Package,
@@ -30,37 +30,37 @@ export const sidebarItems: SidebarItem[] = [
     {
         icon: Building2,
         label: "Realties",
-        href: "/realties"
+        href: "/admin/realties"
     },
     {
         icon: Calculator,
         label: "Accounting",
-        href: "/accounting"
+        href: "/admin/accounting"
     },
     {
         icon: Users,
         label: "Users",
-        href: "/users"
+        href: "/admin/users"
     },
     {
         icon: FileCheck,
         label: "Deal Finalization",
-        href: "/deals"
+        href: "/admin/deals"
     },
     {
         icon: PiggyBank,
         label: "Commission",
-        href: "/commission"
+        href: "/admin/commission"
     },
     {
         icon: Files,
         label: "Documents",
-        href: "/documents"
+        href: "/admin/documents"
     },
     {
         icon: MessageCircle,
         label: "Chat Support",
-        href: "/support"
+        href: "/admin/support"
     }
 ]
 

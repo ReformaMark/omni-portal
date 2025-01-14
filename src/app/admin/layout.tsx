@@ -32,7 +32,7 @@ export default function AdminLayout({
                         <Header />
                         <div className="md:flex">
                             <AppSidebar />
-                            <main className="flex-1">{children}</main>
+                            <main className="flex-1 min-h-screen">{children}</main>
                         </div>
                     </div>
                 </SidebarProvider>
