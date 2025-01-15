@@ -1,4 +1,5 @@
-import { Header } from "@/components/header"
+
+import { Header } from "@/components/headerTab"
 import { AppSidebar } from "@/components/sidebar"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import "@/lib/globals.css"
