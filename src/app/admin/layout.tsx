@@ -1,9 +1,9 @@
+import { Header } from "@/components/header"
 import { AppSidebar } from "@/components/sidebar"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import "@/lib/globals.css"
 import { Metadata } from "next"
 import { Poppins } from "next/font/google"
-import { Header } from "@/components/header"
 
 const poppinsFont = Poppins({
     subsets: ["latin"],
