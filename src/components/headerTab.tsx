@@ -26,40 +26,86 @@ interface NavItem {
 const navItems: NavItem[] = [
     {
         title: "HDC Properties",
-        href: "/hdc-properties",
-        isActive: true,
+        href: "/admin/inventory",
     },
     {
         title: "Other Properties",
-        href: "/other-properties",
+        href: "/admin/other-properties",
+    },
+]
+
+const accountItems: NavItem[] = [
+    {
+        title: "Buyers",
+        href: "/admin/accounts",
+    },
+    {
+        title: "Sellers",
+        href: "/admin/sellers",
+    },
+    {
+        title: "Admins",
+        href: "/admin/account-admin",
     },
 ]
 
 export function Header() {
     const pathname = usePathname()
 
+    const updatedNavItems = navItems.map(item => ({
+        ...item,
+        isActive: pathname === item.href,
+    }))
+
+    const updatedAccountItems = accountItems.map(item => ({
+        ...item,
+        isActive: pathname === item.href,
+    }))
+
     return (
         <header className="border-b bg-white">
             <div className="flex h-16 items-center max-md:justify-between px-4 md:px-6">
                 <div className="flex items-center gap-4 ml-12">
                     <HomeAvatar />
-                    <nav className="hidden md:flex items-center gap-12 ml-[120px]">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={cn(
-                                    "text-sm font-medium transition-colors hover:text-primary relative py-4",
-                                    item.isActive ? "text-dark" : "text-muted-foreground"
-                                )}
-                            >
-                                {item.title}
-                                {item.isActive && (
-                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-dark" />
-                                )}
-                            </Link>
-                        ))}
-                    </nav>
+                    {pathname === "/admin/inventory" && (
+                        <nav className="hidden md:flex items-center gap-12 ml-[120px]">
+                            {updatedNavItems.map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={cn(
+                                        "text-sm font-medium transition-colors hover:text-primary relative py-4",
+                                        item.isActive ? "text-dark" : "text-muted-foreground"
+                                    )}
+                                >
+                                    {item.title}
+                                    {item.isActive && (
+                                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-dark" />
+                                    )}
+                                </Link>
+                            ))}
+                        </nav>
+                    )}
+
+                    {(pathname === "/admin/accounts" || pathname === "/admin/sellers" || pathname === "/admin/account-admin") && (
+                        <nav className="hidden md:flex items-center gap-12 ml-[120px]">
+                            {updatedAccountItems.map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={cn(
+                                        "text-sm font-medium transition-colors hover:text-primary relative py-4",
+                                        item.isActive ? "text-dark" : "text-muted-foreground"
+                                    )}
+                                >
+                                    {item.title}
+                                    {item.isActive && (
+                                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-dark" />
+                                    )}
+                                </Link>
+                            ))}
+                        </nav>
+                    )}
                 </div>
 
                 <div className="ml-auto items-center gap-4 mr-12 hidden lg:flex">

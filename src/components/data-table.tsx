@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { cn } from "@/lib/utils"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -27,11 +28,17 @@ import * as React from "react"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  isInventory?: boolean;
+  search?: string;
+  placeholder?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  isInventory,
+  placeholder,
+  search,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -59,19 +66,24 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-end py-4 mr-[120px]">
+      <div className={cn(
+        "flex items-center mb-3",
+        isInventory && "justify-end py-4 mr-[120px]"
+      )}>
         <Input
-          placeholder="Search a property..."
-          value={(table.getColumn("lot")?.getFilterValue() as string) ?? ""}
+          placeholder={placeholder || "Search"}
+          value={(table.getColumn(`${search}`)?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("lot")?.setFilterValue(event.target.value)
+            table.getColumn(`${search}`)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
 
-        <div
-          className="border-l-2 border-lightGray h-6 ml-2"
-        />
+        {isInventory && (
+          <div
+            className="border-l-2 border-lightGray h-6 ml-2"
+          />
+        )}
         {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto text-primary">

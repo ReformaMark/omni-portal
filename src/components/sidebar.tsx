@@ -40,7 +40,7 @@ export const sidebarItems: SidebarItem[] = [
     {
         icon: Users,
         label: "Users",
-        href: "/admin/users"
+        href: "/admin/accounts",
     },
     {
         icon: FileCheck,

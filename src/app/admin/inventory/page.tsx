@@ -51,6 +51,9 @@ const InventoryPage = () => {
                         <DataTable
                             columns={inventoryColumns}
                             data={dummy}
+                            isInventory
+                            placeholder="Search a property"
+                            search="lot"
                         />
                     </TabsContent>
 
@@ -58,6 +61,9 @@ const InventoryPage = () => {
                         <DataTable
                             columns={inventoryColumns}
                             data={filteredAvailableDummy}
+                            isInventory
+                            placeholder="Search a property"
+                            search="lot"
                         />
                     </TabsContent>
 
@@ -65,6 +71,9 @@ const InventoryPage = () => {
                         <DataTable
                             columns={inventoryColumns}
                             data={filteredReservedDummy}
+                            isInventory
+                            placeholder="Search a property"
+                            search="lot"
                         />
                     </TabsContent>
 
@@ -72,6 +81,9 @@ const InventoryPage = () => {
                         <DataTable
                             columns={inventoryColumns}
                             data={filteredSoldDummy}
+                            isInventory
+                            placeholder="Search a property"
+                            search="lot"
                         />
                     </TabsContent>
 
@@ -79,6 +91,9 @@ const InventoryPage = () => {
                         <DataTable
                             columns={inventoryColumns}
                             data={filteredDueDummy}
+                            isInventory
+                            placeholder="Search a property"
+                            search="lot"
                         />
                     </TabsContent>
                 </Tabs>
