@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button"
 import { ColumnDef } from "@tanstack/react-table"
 import { Eye, Mail, Pencil, PlusIcon, Trash2, Trash2Icon } from "lucide-react"
 import { sellersDummy, UsersDummyType } from "../../../../../data/dummy-users"
+import { useState } from "react"
+import { EditSellerModal } from "./edit-sellers-modal"
+import { AddSellersModal } from "./add-sellers-modal"
 
 export const AccountColumn: ColumnDef<UsersDummyType>[] = [
     {
@@ -87,79 +90,101 @@ export const AccountColumn: ColumnDef<UsersDummyType>[] = [
     {
         accessorKey: "actions",
         header: () => <div className="text-center">ACTIONS</div>,
-        cell: () => {
+        cell: function Cell({ row }) {
+            const [showEditModal, setShowEditModal] = useState(false)
+
+            const data = row.original
+
             return (
-                <div className="flex items-center justify-center gap-2">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 p-0"
-                        onClick={() => { }}
-                    >
-                        <Pencil className="h-8 w-8" />
-                    </Button>
+                <>
+                    <div className="flex items-center justify-center gap-2">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 p-0"
+                            onClick={() => { }}
+                        >
+                            <Pencil className="h-8 w-8" />
+                        </Button>
 
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 p-0"
-                        onClick={() => { }}
-                    >
-                        <Eye className="h-8 w-8" />
-                    </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 p-0"
+                            onClick={() => setShowEditModal(true)}
+                        >
+                            <Eye className="h-8 w-8" />
+                        </Button>
 
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 p-0"
-                        onClick={() => { }}
-                    >
-                        <Mail className="h-8 w-8" />
-                    </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 p-0"
+                            onClick={() => { }}
+                        >
+                            <Mail className="h-8 w-8" />
+                        </Button>
 
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 p-0 text-red-600"
-                        onClick={() => { }}
-                    >
-                        <Trash2 className="h-8 w-8" />
-                    </Button>
-                </div>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 p-0 text-red-600"
+                            onClick={() => { }}
+                        >
+                            <Trash2 className="h-8 w-8" />
+                        </Button>
+                    </div>
+
+                    <EditSellerModal
+                        data={data}
+                        onClose={() => setShowEditModal(false)}
+                        open={showEditModal}
+                    />
+                </>
             )
         }
     },
 ]
 
 export const SellersList = () => {
+    const [showAddSellerModal, setShowAddSellerModal] = useState(false)
+
     return (
-        <div className="container mx-auto py-10 px-[50px] relative">
-            <DataTable
-                data={sellersDummy}
-                columns={AccountColumn}
-                search="fname"
-                placeholder="Search an account"
-            />
+        <>
+            <div className="container mx-auto py-10 px-[50px] relative">
+                <DataTable
+                    data={sellersDummy}
+                    columns={AccountColumn}
+                    search="fname"
+                    placeholder="Search an account"
+                />
 
-            <div className="flex flex-row gap-3 absolute right-[50px] top-[40px]">
-                <div className="">
-                    <Button
-                        variant="outline"
-                        className="text-gray"
-                    >
-                        <PlusIcon className="w-7 h-7" />
-                    </Button>
-                </div>
+                <div className="flex flex-row gap-3 absolute right-[50px] top-[40px]">
+                    <div className="">
+                        <Button
+                            variant="outline"
+                            className="text-gray"
+                            onClick={() => setShowAddSellerModal(true)}
+                        >
+                            <PlusIcon className="w-7 h-7" />
+                        </Button>
+                    </div>
 
-                <div className="">
-                    <Button
-                        variant="outline"
-                        className="text-gray"
-                    >
-                        <Trash2Icon className="w-7 h-7" />
-                    </Button>
+                    <div className="">
+                        <Button
+                            variant="outline"
+                            className="text-gray"
+                        >
+                            <Trash2Icon className="w-7 h-7" />
+                        </Button>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <AddSellersModal
+                onClose={() => setShowAddSellerModal(false)}
+                open={showAddSellerModal}
+            />
+        </>
     )
 }
