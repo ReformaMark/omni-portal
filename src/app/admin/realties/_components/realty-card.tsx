@@ -1,44 +1,44 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { MapPin, SquarePen } from "lucide-react"
+import { SquarePen } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
-import { projectDummy, ProjectDummyType } from "../../../../../data/dummy-project"
-import { EditProjectModal } from "./edit-project-modal"
+import { realtyDummy, RealtyDummyType } from "../../../../../data/dummy-realty"
+import { EditRealtyModal } from "./edit-realty-modal"
 
-export const ProjectCard = () => {
+export const RealtyCard = () => {
     const [open, setOpen] = useState(false)
-    const [selectedProject, setSelectedProject] = useState<ProjectDummyType | null>(null)
+    const [selectedRealty, setSelectedRealty] = useState<RealtyDummyType | null>(null)
     const [editOpen, setEditOpen] = useState(false)
 
-    const handleCardClick = (project: ProjectDummyType) => {
-        setSelectedProject(null)
+    const handleCardClick = (project: RealtyDummyType) => {
+        setSelectedRealty(null)
         setEditOpen(false)
 
         setTimeout(() => {
-            setSelectedProject(project)
+            setSelectedRealty(project)
             setOpen(true)
         }, 0)
     }
 
-    const handleEditClick = (project: ProjectDummyType) => {
-        setSelectedProject(null)
+    const handleEditClick = (project: RealtyDummyType) => {
+        setSelectedRealty(null)
         setOpen(false)
 
         setTimeout(() => {
-            setSelectedProject(project)
+            setSelectedRealty(project)
             setEditOpen(true)
         })
     }
 
     const handleDialogClose = () => {
         setOpen(false)
-        setSelectedProject(null)
+        setSelectedRealty(null)
     }
 
     const handleEditModalClose = () => {
         setEditOpen(false)
-        setSelectedProject(null)
+        setSelectedRealty(null)
     }
 
     return (
@@ -46,7 +46,7 @@ export const ProjectCard = () => {
             <div
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-[1300px]"
             >
-                {projectDummy.map((p) => (
+                {realtyDummy.map((p) => (
                     <>
                         <Card
                             className="cursor-pointer"
@@ -57,7 +57,7 @@ export const ProjectCard = () => {
                             >
                                 <Image
                                     src={p.photo!}
-                                    alt={p.projectName}
+                                    alt={p.realtyName}
                                     width={500}
                                     height={500}
                                     className="rounded-md"
@@ -72,12 +72,12 @@ export const ProjectCard = () => {
                 ))}
             </div>
 
-            {selectedProject && (
+            {selectedRealty && (
                 <Dialog open={open} onOpenChange={handleDialogClose}>
                     <DialogContent className="h-[400px]">
                         <DialogHeader>
-                            <DialogTitle className="text-3xl text-dark">{selectedProject.tagName}</DialogTitle>
-                            <DialogDescription>{selectedProject.projectName}</DialogDescription>
+                            <DialogTitle className="text-3xl text-dark">{selectedRealty.tagName}</DialogTitle>
+                            <DialogDescription>{selectedRealty.realtyName}</DialogDescription>
                         </DialogHeader>
                         <div className="border-t w-full" />
 
@@ -86,27 +86,44 @@ export const ProjectCard = () => {
                                 className="h-5 w-5 cursor-pointer"
                                 onClick={(e) => {
                                     e.stopPropagation()
-                                    handleEditClick(selectedProject)
+                                    handleEditClick(selectedRealty)
                                 }}
                             />
                         </div>
 
                         <div className="flex flex-row items-center gap-12">
-                            <Image src={selectedProject.photo!} alt={selectedProject.projectName} width={200} height={200} className="rounded-md" />
-                            <p className="flex flex-row gap-2">
-                                <MapPin />
-                                {selectedProject.projectLocation}
-                            </p>
+                            <Image src={selectedRealty.photo!} alt={selectedRealty.realtyName} width={200} height={200} className="rounded-md" />
+                            <div className="flex flex-col gap-3">
+                                <p className="flex flex-row gap-2">
+                                    <Image
+                                        src="/contactPerson-icon.svg"
+                                        width={15}
+                                        height={15}
+                                        alt={selectedRealty.contactPerson}
+                                    />
+                                    {selectedRealty.contactPerson}
+                                </p>
+
+                                <p className="flex flex-row gap-2">
+                                    <Image
+                                        src="/tele-icon.svg"
+                                        width={15}
+                                        height={15}
+                                        alt={selectedRealty.contactNumber}
+                                    />
+                                    {selectedRealty.contactNumber}
+                                </p>
+                            </div>
                         </div>
                     </DialogContent>
                 </Dialog>
             )}
 
-            {selectedProject && (
-                <EditProjectModal
+            {selectedRealty && (
+                <EditRealtyModal
                     open={editOpen}
                     onClose={handleEditModalClose}
-                    data={selectedProject}
+                    data={selectedRealty}
                 />
             )}
         </>

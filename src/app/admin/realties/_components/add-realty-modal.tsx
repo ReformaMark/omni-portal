@@ -23,20 +23,21 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
-    projectName: z.string().min(1, "Project name is required."),
+    realtyName: z.string().min(1, "Realty name is required."),
     tagName: z.string().min(1, "Tag name is required"),
-    projectLocation: z.string().min(1, "Project location is required"),
+    contactPerson: z.string().min(1, "Contact person is required"),
+    contactNumber: z.string().min(1, "Contact number is required")
 })
 
-interface AddProjectModalProps {
+interface AddRealtyModalProps {
     onOpen: (open: boolean) => void;
     open: boolean;
 }
 
-export const AddProjectModal = ({
+export const AddRealtyModal = ({
     onOpen,
     open,
-}: AddProjectModalProps) => {
+}: AddRealtyModalProps) => {
     // const generateUploadUrl = useMutation(api.projects.generateUploadUrl);
 
     const imageInput = useRef<HTMLInputElement>(null)
@@ -80,8 +81,9 @@ export const AddProjectModal = ({
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            projectLocation: "",
-            projectName: "",
+            contactNumber: "",
+            contactPerson: "",
+            realtyName: "",
             tagName: "",
         }
     })
@@ -97,7 +99,7 @@ export const AddProjectModal = ({
                         className="text-dark font-bold text-3xl flex items-center gap-2"
                     >
                         <CirclePlus className="h-5 w-5" />
-                        Add project
+                        Add realty
                     </DialogTitle>
                 </DialogHeader>
 
@@ -111,49 +113,14 @@ export const AddProjectModal = ({
                         className="space-y-4 flex flex-col items-center justify-center"
                     >
                         <div
-                            className="relative w-32 h-32 border-2 border-dotted rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
-                            onClick={() => document.getElementById("coverPhoto")?.click()}
-                        >
-                            {selectedImage ? (
-                                <Image
-                                    src={imagePreview || "/placeholder.svg"}
-                                    alt="Preview"
-                                    className="w-full h-full object-cover rounded-lg"
-                                    width={400}
-                                    height={400}
-                                    onClick={() => {
-                                        setImagePreview(null)
-                                        setSelectedImage(null)
-                                    }}
-                                />
-                            ) :
-                                (
-                                    <div className="">
-                                        <HousePlus className="w-12 h-12 text-gray-300" />
-                                        <Input
-                                            type="file"
-                                            accept="image/*"
-                                            id="coverPhoto"
-                                            ref={imageInput}
-                                            onChange={handleImageChange}
-                                            disabled={selectedImage !== null}
-                                            className="hidden"
-                                        />
-                                        {/* <p className="absolute text-xs top-[60px]">UPLOAD COVER PHOTO</p> */}
-                                    </div>
-                                )}
-                        </div>
-                        <p className="text-xs">UPLOAD COVER PHOTO</p>
-
-                        <div
                             className="grid grid-cols-5 gap-4 w-full"
                         >
                             <FormField
                                 control={form.control}
-                                name="projectName"
+                                name="realtyName"
                                 render={({ field }) => (
                                     <FormItem className="col-span-3">
-                                        <FormLabel>Project Name</FormLabel>
+                                        <FormLabel>Realty Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Enter Project Name" {...field} />
                                         </FormControl>
@@ -176,20 +143,72 @@ export const AddProjectModal = ({
                             />
                         </div>
 
-                        <div className="w-full">
-                            <FormField
-                                control={form.control}
-                                name="projectLocation"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Project Location</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter Project Location" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                        <div className="w-full grid grid-cols-5 gap-[55px]">
+                            <div className="col-span-3">
+                                <FormField
+                                    control={form.control}
+                                    name="contactPerson"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Contact Person</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Enter Contact Person" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="contactNumber"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Contact Number</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Enter Contact Number" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <div className="col-span-2">
+                                <div
+                                    className="relative mb-2 w-32 h-32 border-2 border-dotted rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+                                    onClick={() => document.getElementById("coverPhoto")?.click()}
+                                >
+                                    {selectedImage ? (
+                                        <Image
+                                            src={imagePreview || "/placeholder.svg"}
+                                            alt="Preview"
+                                            className="w-full h-full object-cover rounded-lg"
+                                            width={400}
+                                            height={400}
+                                            onClick={() => {
+                                                setImagePreview(null)
+                                                setSelectedImage(null)
+                                            }}
+                                        />
+                                    ) :
+                                        (
+                                            <div className="">
+                                                <HousePlus className="w-12 h-12 text-gray-300" />
+                                                <Input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    id="coverPhoto"
+                                                    ref={imageInput}
+                                                    onChange={handleImageChange}
+                                                    disabled={selectedImage !== null}
+                                                    className="hidden"
+                                                />
+                                            </div>
+                                        )}
+                                </div>
+                                <p className="text-xs">UPLOAD COVER PHOTO</p>
+                            </div>
                         </div>
 
                         <div
