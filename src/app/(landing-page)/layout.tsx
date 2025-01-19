@@ -23,7 +23,7 @@ export default function RootLayout({
     <ConvexAuthNextjsServerProvider>
       <html lang="en">
         <body
-          className={`${poppinsFont.className} antialiased flex flex-col min-h-screen container mx-auto`}
+          className={`${poppinsFont.className} antialiased flex flex-col min-h-screen mx-auto`}
         >
           <ConvexClientProvider>
             {children}

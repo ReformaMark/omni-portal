@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { createAccount, getAuthUserId } from "@convex-dev/auth/server";
 import { generateAccountId } from "@/lib/utils";
 
@@ -18,15 +18,15 @@ export const createAdmin = mutation({
     },
     handler: async (ctx, args) => {
         try {
-            // const adminId = await getAuthUserId(ctx)
+            const adminId = await getAuthUserId(ctx)
 
-            // if (!adminId) throw new ConvexError("Not authenticated");
+            if (!adminId) throw new ConvexError("Not authenticated");
 
-            // const admin = await ctx.db.get(adminId);
+            const admin = await ctx.db.get(adminId);
 
-            // if (!admin || admin.role !== "admin") {
-            //     throw new ConvexError("Unauthorized - Only admins can create users");
-            // }
+            if (!admin || admin.role !== "admin") {
+                throw new ConvexError("Unauthorized - Only admins can create users");
+            }
 
             const existingEmail = await ctx.db
                 .query("users")
@@ -36,7 +36,7 @@ export const createAdmin = mutation({
             if (existingEmail) throw new ConvexError("Email already exists")
 
             const role = "admin"
-            const password = "123456"
+            const password = "123456" // generate random password and send it to email
             const accountId = generateAccountId();
 
             const { email, ...userData } = args;
@@ -63,5 +63,16 @@ export const createAdmin = mutation({
             console.error("Error in createAdmin:", error)
             throw error;
         }
+    }
+})
+
+export const role = query({
+    args: {},
+    handler: async (ctx) => {
+        const userId = await getAuthUserId(ctx)
+        if (!userId) return null
+
+        const user = await ctx.db.get(userId)
+        return user?.role
     }
 })
