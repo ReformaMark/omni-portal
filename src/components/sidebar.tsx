@@ -70,7 +70,7 @@ export const AppSidebar = () => {
     return (
         <>
             <section
-                className='border-r bg-[#FFFFFF] w-[263px] pt-7 px-5 hidden lg:block'
+                className='border-r bg-[#FFFFFF] w-[263px] pt-[85px] px-5 hidden lg:block'
             >
                 {sidebarItems.map((item) => (
                     <Link

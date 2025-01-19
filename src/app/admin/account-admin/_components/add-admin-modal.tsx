@@ -21,6 +21,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { MapPin, Phone, UserIcon, UserPlus } from "lucide-react"
 import { useForm } from "react-hook-form"
 import z from "zod"
+import { useMutation } from "@tanstack/react-query";
+import { useConvexMutation } from "@convex-dev/react-query"
+import { api } from "../../../../../convex/_generated/api"
 
 const formSchema = z.object({
     fname: z.string().min(1, "First name is required"),
@@ -42,6 +45,10 @@ export const AddAdminModal = ({
     onClose,
     open,
 }: AddAdminModalProps) => {
+    const { mutate: createAdmin, isPending } = useMutation({
+        mutationFn: useConvexMutation(api.users.createAdmin)
+    })
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -56,10 +63,18 @@ export const AddAdminModal = ({
         }
     })
 
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const handleSubmit = async (values: z.infer<typeof formSchema>) => {
 
-        // TODO: WHEN SUCCESS SEND API BACKEND THEN PROCEED TO FORM.RESET
-        console.log(values)
+        await createAdmin({
+            email: values.email,
+            barangay: values.barangay,
+            city: values.city,
+            contact: values.contact,
+            fname: values.fname,
+            houseNumber: values.houseNumber,
+            lname: values.lname,
+            street: values.street,
+        })
 
         form.reset()
         // toast?? can also add delay when submitting for decent animation
@@ -261,8 +276,9 @@ export const AddAdminModal = ({
                             <Button
                                 type="submit"
                                 className="bg-dark"
+                                disabled={isPending}
                             >
-                                Save Changes
+                                {isPending ? "Adding..." : "Save Changes"}
                             </Button>
                         </div>
                     </form>
