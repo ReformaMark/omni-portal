@@ -8,13 +8,14 @@ import {
     SheetTrigger
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
-import { Bell, DownloadIcon, MenuIcon } from 'lucide-react'
+import { Bell, DownloadIcon, Loader2Icon, MenuIcon } from 'lucide-react'
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import HomeAvatar from "./home-avatar"
 import { SelectWithImages } from "./select-with-images"
 import { sidebarItems } from './sidebar'
 import { UserDropdown } from "./user-dropdown"
+import { useCurrentUser } from "@/hooks/use-current-user"
 
 
 interface NavItem {
@@ -50,7 +51,10 @@ const accountItems: NavItem[] = [
 ]
 
 export function Header() {
+    const { user } = useCurrentUser()
     const pathname = usePathname()
+
+    const fullname = user?.fname + " " + user?.lname
 
     const updatedNavItems = navItems.map(item => ({
         ...item,
@@ -120,12 +124,14 @@ export function Header() {
                         <span className="sr-only">Notifications</span>
                     </Button>
 
-                    <UserDropdown
-                        avatarUrl="https://github.com/shadcn.png"
-                        name="John Kevin"
-                        role="President"
-                        key={1}
-                    />
+                    {user ? (
+                        <UserDropdown
+                            avatarUrl="https://github.com/shadcn.png"
+                            name={fullname}
+                            role={user.role!}
+                            key={user.accountId!}
+                        />
+                    ) : <Loader2Icon className="w-6 h-6 animate-spin" />}
                 </div>
 
                 {/* Sheet */}

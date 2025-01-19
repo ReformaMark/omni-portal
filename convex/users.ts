@@ -66,6 +66,15 @@ export const createAdmin = mutation({
     }
 })
 
+export const current = query({
+    args: {},
+    handler: async (ctx) => {
+        const userId = await getAuthUserId(ctx);
+        if (!userId) return null;
+        return await ctx.db.get(userId);
+    },
+});
+
 export const role = query({
     args: {},
     handler: async (ctx) => {

@@ -3,6 +3,7 @@
 import { ChevronDown, LogOutIcon, SettingsIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 interface UserDropdownProps {
     name: string;
@@ -15,6 +16,8 @@ export const UserDropdown = ({
     avatarUrl,
     role,
 }: UserDropdownProps) => {
+    const { signOut } = useAuthActions()
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger className="focus-visible:outline-none">
@@ -31,12 +34,15 @@ export const UserDropdown = ({
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
                     <SettingsIcon className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600">
+                <DropdownMenuItem
+                    className="text-red-600 cursor-pointer"
+                    onClick={() => signOut()}
+                >
                     <LogOutIcon className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                 </DropdownMenuItem>

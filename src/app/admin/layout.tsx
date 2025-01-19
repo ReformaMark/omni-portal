@@ -1,4 +1,5 @@
 
+import { AdminGuard } from "@/components/auth/admin-guard"
 import { ConvexClientProvider } from "@/components/convex-client-provider"
 import { Header } from "@/components/headerTab"
 import { AppSidebar } from "@/components/sidebar"
@@ -32,15 +33,17 @@ export default function AdminLayout({
                     <body
                         className={`${poppinsFont.className} bg-[#F6F6F6]`}
                     >
-                        <SidebarProvider>
-                            <div className="flex min-h-screen flex-col antialiased w-full">
-                                <Header />
-                                <div className="md:flex">
-                                    <AppSidebar />
-                                    <main className="flex-1 min-h-screen">{children}</main>
+                        <AdminGuard>
+                            <SidebarProvider>
+                                <div className="flex min-h-screen flex-col antialiased w-full">
+                                    <Header />
+                                    <div className="md:flex">
+                                        <AppSidebar />
+                                        <main className="flex-1 min-h-screen">{children}</main>
+                                    </div>
                                 </div>
-                            </div>
-                        </SidebarProvider>
+                            </SidebarProvider>
+                        </AdminGuard>
                     </body>
                 </html>
             </ConvexClientProvider>
