@@ -48,6 +48,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
                 setSelectedProject(null)
             } catch (error) {
                 toast.error("Failed to delete project")
+                console.error(error)
             }
         }
     }

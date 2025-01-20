@@ -49,6 +49,7 @@ export const RealtyCard = ({ realty }: RealtyCardProps) => {
                 setSelectedRealty(null)
             } catch (error) {
                 toast.error("Failed to delete project")
+                console.error(error)
             }
         }
     }

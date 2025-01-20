@@ -87,6 +87,7 @@ export const AddProjectModal = ({
             onOpen(false)
         } catch (error) {
             toast.error("Failed to add project")
+            console.error(error)
         }
     }
 
