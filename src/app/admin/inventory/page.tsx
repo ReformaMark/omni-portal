@@ -4,15 +4,27 @@ import { DataTable } from "@/components/data-table";
 import { SelectWithImages } from "@/components/select-with-images";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "convex/react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { InventoryActions } from "../_components/inventory-actions";
 import { InventoryCard } from "../_components/inventory-card";
 import { inventoryColumns } from "../_components/inventory-columns";
+import { PropertyType } from "../../../../data/dummy";
 
 const InventoryPage = () => {
     const [selectedProjectId, setSelectedProjectId] = useState<Id<"project"> | null>(null);
+    const [selectedRows, setSelectedRows] = useState<Id<"property">[]>([]);
+
+    const handleRowSelection = useCallback((rows: PropertyType[]) => {
+        if (!rows.length) {
+            setSelectedRows([]);
+            return;
+        }
+
+        const validRows = rows.filter(row => row?._id);
+        setSelectedRows(validRows.map(row => row._id));
+    }, []);
 
     const properties = useQuery(api.property.get, {
         projectId: selectedProjectId ?? undefined
@@ -69,6 +81,7 @@ const InventoryPage = () => {
                             isInventory
                             placeholder="Search a property"
                             search="lot"
+                            onRowSelectionChange={handleRowSelection}
                         />
                     </TabsContent>
 
@@ -79,6 +92,7 @@ const InventoryPage = () => {
                             isInventory
                             placeholder="Search a property"
                             search="lot"
+                            onRowSelectionChange={handleRowSelection}
                         />
                     </TabsContent>
 
@@ -89,6 +103,7 @@ const InventoryPage = () => {
                             isInventory
                             placeholder="Search a property"
                             search="lot"
+                            onRowSelectionChange={handleRowSelection}
                         />
                     </TabsContent>
 
@@ -99,6 +114,7 @@ const InventoryPage = () => {
                             isInventory
                             placeholder="Search a property"
                             search="lot"
+                            onRowSelectionChange={handleRowSelection}
                         />
                     </TabsContent>
 
@@ -109,12 +125,16 @@ const InventoryPage = () => {
                             isInventory
                             placeholder="Search a property"
                             search="lot"
+                            onRowSelectionChange={handleRowSelection}
                         />
                     </TabsContent>
                 </Tabs>
 
                 <div className="absolute right-0 top-[65px]">
-                    <InventoryActions projectId={selectedProjectId} />
+                    <InventoryActions
+                        projectId={selectedProjectId}
+                        selectedRows={selectedRows}
+                    />
                 </div>
             </div>
         </section>

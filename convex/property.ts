@@ -117,3 +117,21 @@ export const edit = mutation({
         });
     },
 });
+
+export const removeMany = mutation({
+    args: {
+        ids: v.array(v.id("property"))
+    },
+    handler: async (ctx, args) => {
+        const adminId = await getAuthUserId(ctx);
+        if (!adminId) throw new Error("Unauthorized");
+
+        const admin = await ctx.db.get(adminId);
+        if (!admin || admin.role !== "admin") {
+            throw new Error("Unauthorized - Only admins can delete properties");
+        }
+
+        await Promise.all(args.ids.map(id => ctx.db.delete(id)));
+        return true;
+    }
+});

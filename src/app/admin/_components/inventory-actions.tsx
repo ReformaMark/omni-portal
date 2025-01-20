@@ -26,6 +26,7 @@ import z from "zod"
 import { api } from "../../../../convex/_generated/api"
 import { Id } from "../../../../convex/_generated/dataModel"
 import { toast } from "sonner"
+import { useConfirm } from "@/hooks/use-confirm"
 
 const formSchema = z.object({
     block: z.string().min(1, "Block is required"),
@@ -41,11 +42,36 @@ const formSchema = z.object({
 
 interface InventoryActionsProps {
     projectId: Id<"project"> | null;
+    selectedRows: Id<"property">[];
 }
 
-export const InventoryActions = ({ projectId }: InventoryActionsProps) => {
+export const InventoryActions = ({
+    projectId,
+    selectedRows,
+}: InventoryActionsProps) => {
     const [openAddModal, setOpenAddModal] = useState(false)
     const addProperty = useMutation(api.property.create);
+    const deleteProperties = useMutation(api.property.removeMany);
+
+    const [DeleteConfirmDialog, confirmDelete] = useConfirm(
+        "Delete Properties",
+        "Are you sure you want to delete the selected properties? This action cannot be undone."
+    );
+
+    const handleDelete = async () => {
+        if (selectedRows.length === 0) return;
+
+        const confirmed = await confirmDelete();
+        if (confirmed) {
+            try {
+                await deleteProperties({ ids: selectedRows });
+                toast.success(`Successfully deleted ${selectedRows.length} properties`);
+            } catch (error) {
+                toast.error("Failed to delete properties");
+                console.error(error);
+            }
+        }
+    };
 
     const project = useQuery(
         api.projects.getById,
@@ -97,7 +123,8 @@ export const InventoryActions = ({ projectId }: InventoryActionsProps) => {
                 <Button
                     className="ml-2 text-gray"
                     variant="outline"
-                // TODO: MAKE A CONFIRM MODAL COMPONENT FOR FASTER CONFIRMATION ACTIONS
+                    onClick={handleDelete}
+                    disabled={selectedRows.length === 0}
                 >
                     <Trash2 className="w-9 h-9" />
                 </Button>
@@ -312,10 +339,10 @@ export const InventoryActions = ({ projectId }: InventoryActionsProps) => {
                             </div>
                         </form>
                     </Form>
-
                 </DialogContent>
             </Dialog>
 
+            <DeleteConfirmDialog />
         </>
     )
 }

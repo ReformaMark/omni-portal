@@ -11,8 +11,28 @@ import { PropertyType } from "../../../../data/dummy";
 import { InventoryEditModal } from "./inventory-edit-modal";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const inventoryColumns: ColumnDef<PropertyType>[] = [
+    {
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox
+                checked={table.getIsAllPageRowsSelected()}
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
     {
         accessorKey: "lotId",
         header: () => <div className="text-center">LOT ID NO.</div>,
