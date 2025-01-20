@@ -15,12 +15,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "convex/react";
 
 import { CirclePlus, HousePlus } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { api } from "../../../../../convex/_generated/api";
+import { toast } from "sonner";
 
 const formSchema = z.object({
     realtyName: z.string().min(1, "Realty name is required."),
@@ -38,11 +41,12 @@ export const AddRealtyModal = ({
     onOpen,
     open,
 }: AddRealtyModalProps) => {
-    // const generateUploadUrl = useMutation(api.projects.generateUploadUrl);
+    const generateUploadUrl = useMutation(api.projects.generateUploadUrl);
+    const addRealty = useMutation(api.realty.create)
 
-    const imageInput = useRef<HTMLInputElement>(null)
     const [selectedImage, setSelectedImage] = useState<File | null>(null)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
+    const imageInput = useRef<HTMLInputElement>(null)
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -57,25 +61,34 @@ export const AddRealtyModal = ({
     }
 
     const handleAddProject = async (values: z.infer<typeof formSchema>) => {
-        // const postUrl = await generateUploadUrl()
+        try {
+            const postUrl = await generateUploadUrl()
 
-        // const result = await fetch(postUrl, {
-        //     method: "POST",
-        //     headers: { "Content-Type": selectedImage!.type },
-        //     body: selectedImage,
-        // });
+            const result = await fetch(postUrl, {
+                method: "POST",
+                headers: { "Content-Type": selectedImage!.type },
+                body: selectedImage,
+            });
 
-        // const { storageId } = await result.json();
+            const { storageId } = await result.json();
 
-        // await addProject({
-        //     storageId,
-        //     ...
-        // })
+            await addRealty({
+                storageId,
+                ...values,
+            })
 
-        console.log(values)
+            form.reset()
+            setSelectedImage(null)
+            if (imageInput.current) {
+                imageInput.current.value = "";
+            }
 
-        setSelectedImage(null)
-        imageInput.current!.value = "";
+            toast.success(`Successfully added realty ${values.realtyName}`)
+
+            onOpen(false)
+        } catch (error) {
+            toast.error("Failed to add project")
+        }
     }
 
     const form = useForm<z.infer<typeof formSchema>>({

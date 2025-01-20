@@ -1,7 +1,6 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
-import { ArrowUpRightFromSquare } from "lucide-react";
 
 export const generateUploadUrl = mutation(async (ctx) => {
     return await ctx.storage.generateUploadUrl();
@@ -16,11 +15,9 @@ export const create = mutation({
     },
     handler: async (ctx, args) => {
         const adminId = await getAuthUserId(ctx)
-
         if (!adminId) throw new ConvexError("Not authenticated");
 
         const admin = await ctx.db.get(adminId);
-
         if (!admin || admin.role !== "admin") {
             throw new ConvexError("Unauthorized - Only admins can create users");
         }
