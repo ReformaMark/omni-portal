@@ -1,16 +1,15 @@
 "use client"
 
 import { DataTable } from "@/components/data-table";
+import { SelectWithImages } from "@/components/select-with-images";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { dummy } from "../../../../data/dummy";
+import { useQuery } from "convex/react";
+import { useState } from "react";
+import { api } from "../../../../convex/_generated/api";
+import { Id } from "../../../../convex/_generated/dataModel";
 import { InventoryActions } from "../_components/inventory-actions";
 import { InventoryCard } from "../_components/inventory-card";
 import { inventoryColumns } from "../_components/inventory-columns";
-import { useState } from "react";
-import { Id } from "../../../../convex/_generated/dataModel";
-import { useQuery } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
-import { SelectWithImages } from "@/components/select-with-images";
 
 const InventoryPage = () => {
     const [selectedProjectId, setSelectedProjectId] = useState<Id<"project"> | null>(null);
@@ -19,27 +18,13 @@ const InventoryPage = () => {
         projectId: selectedProjectId ?? undefined
     });
 
-    console.log(properties)
+    const availableProperties = properties?.filter(property => property.status === "available");
 
-    const availableProperties = useQuery(api.property.getByStatus, {
-        projectId: selectedProjectId ?? undefined,
-        status: "available"
-    });
+    const reservedProperties = properties?.filter(property => property.status === "reserved");
 
-    const reservedProperties = useQuery(api.property.getByStatus, {
-        projectId: selectedProjectId ?? undefined,
-        status: "reserved"
-    });
+    const soldProperties = properties?.filter(property => property.status === "sold");
 
-    const soldProperties = useQuery(api.property.getByStatus, {
-        projectId: selectedProjectId ?? undefined,
-        status: "sold"
-    });
-
-    const dueProperties = useQuery(api.property.getByStatus, {
-        projectId: selectedProjectId ?? undefined,
-        status: "due"
-    });
+    const dueProperties = properties?.filter(property => property.status === "due");
 
     return (
         <section
@@ -129,7 +114,7 @@ const InventoryPage = () => {
                 </Tabs>
 
                 <div className="absolute right-0 top-[65px]">
-                    <InventoryActions />
+                    <InventoryActions projectId={selectedProjectId} />
                 </div>
             </div>
         </section>

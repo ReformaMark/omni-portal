@@ -18,10 +18,14 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery } from "convex/react"
 import { CirclePlus, CreditCard, LandPlot, MapPin, PlusIcon, ReceiptText, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import z from "zod"
+import { api } from "../../../../convex/_generated/api"
+import { Id } from "../../../../convex/_generated/dataModel"
+import { toast } from "sonner"
 
 const formSchema = z.object({
     block: z.string().min(1, "Block is required"),
@@ -35,8 +39,18 @@ const formSchema = z.object({
     term: z.coerce.number().min(1, "Term is required"),
 })
 
-export const InventoryActions = () => {
+interface InventoryActionsProps {
+    projectId: Id<"project"> | null;
+}
+
+export const InventoryActions = ({ projectId }: InventoryActionsProps) => {
     const [openAddModal, setOpenAddModal] = useState(false)
+    const addProperty = useMutation(api.property.create);
+
+    const project = useQuery(
+        api.projects.getById,
+        projectId ? { id: projectId } : "skip"
+    );
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -46,15 +60,26 @@ export const InventoryActions = () => {
         }
     })
 
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+            if (!projectId) {
+                toast.error("Please select a project first");
+                return;
+            }
 
-        // TODO: WHEN SUCCESS SEND API BACKEND THEN PROCEED TO FORM.RESET
-        console.log(values)
+            await addProperty({
+                projectId,
+                ...values,
+            });
 
-        form.reset()
-        // toast?? can also add delay when submitting for decent animation
-        setOpenAddModal(false)
-    }
+            toast.success("Property added successfully");
+            form.reset();
+            setOpenAddModal(false);
+        } catch (error) {
+            toast.error("Failed to add property");
+            console.error(error);
+        }
+    };
 
     return (
         <>
@@ -93,7 +118,7 @@ export const InventoryActions = () => {
                         <DialogDescription
                             className="text-muted-foreground text-xs ml-[29px]"
                         >
-                            Living Water Subdivision
+                            {project?.projectName ?? "Select a project"}
                         </DialogDescription>
                     </DialogHeader>
 

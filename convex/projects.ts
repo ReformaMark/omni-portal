@@ -151,3 +151,12 @@ export const remove = mutation({
         await ctx.db.delete(args.id);
     }
 })
+
+export const getById = query({
+    args: {
+        id: v.id("project")
+    },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.id);
+    },
+});
