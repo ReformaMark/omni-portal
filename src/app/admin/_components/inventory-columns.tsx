@@ -171,13 +171,20 @@ export const inventoryColumns: ColumnDef<PropertyType>[] = [
                                     <div className="bg-white p-2 text-center">{formatPrice(data.pricePerSqm.toFixed(2))}</div>
 
                                     <div className="bg-[#EDEDED] text-gray p-2">TOTAL CONTRACT PRICE</div>
-                                    <div className="bg-white p-2 text-center">273,036.50</div>
+                                    <div className="bg-white p-2 text-center">
+                                        {formatPrice(data.totalContractPrice.toFixed(2))}
+                                    </div>
 
                                     <div className="bg-[#EDEDED] text-gray p-2">MISCELLANEOUS FEE</div>
-                                    <div className="bg-white p-2 text-center">24,821.50</div>
+                                    <div className="bg-white p-2 text-center">
+                                        {/* {formatPrice(data.miscellaneousFee.toFixed(2))} */}
+                                        0.00
+                                    </div>
 
                                     <div className="bg-[#EDEDED] text-gray p-2">NET CONTRACT PRICE</div>
-                                    <div className="bg-white p-2 text-center">270,036.50</div>
+                                    <div className="bg-white p-2 text-center">
+                                        {formatPrice(data.netContractPrice.toFixed(2))}
+                                    </div>
 
                                     <div className="bg-[#EDEDED] text-gray p-2">TOTAL SELLING PRICE</div>
                                     <div className="bg-white p-2 text-center">{formatPrice(data.totalSellingPrice.toFixed(2))}</div>
@@ -186,7 +193,9 @@ export const inventoryColumns: ColumnDef<PropertyType>[] = [
                                     <div className="bg-white p-2 text-center">{formatPrice(data.monthlyAmortization.toFixed(2))}</div>
 
                                     <div className="bg-[#EDEDED] text-gray p-2">TERM</div>
-                                    <div className="bg-white p-2 text-center">60</div>
+                                    <div className="bg-white p-2 text-center">
+                                        {data.term} months
+                                    </div>
                                 </div>
                             </div>
 
