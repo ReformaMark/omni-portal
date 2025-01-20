@@ -113,7 +113,11 @@ export function Header() {
                 </div>
 
                 <div className="ml-auto items-center gap-4 mr-12 hidden lg:flex">
-                    <SelectWithImages />
+                    {/* {(pathname === "/admin/inventory" || pathname === "/admin/other-properties" || pathname === "/admin/deals") && (
+                        <SelectWithImages
+                            onProjectSelect={() => {}}
+                        />
+                    )} */}
                     <Button variant="semiGhost" size="icon">
                         <DownloadIcon className="h-5" />
                         <span className="sr-only">User account</span>

@@ -1,39 +1,69 @@
+"use client"
+
 import { DataTable } from "@/components/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { dummy } from "../../../../data/dummy";
 import { InventoryActions } from "../_components/inventory-actions";
 import { InventoryCard } from "../_components/inventory-card";
 import { inventoryColumns } from "../_components/inventory-columns";
+import { useState } from "react";
+import { Id } from "../../../../convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { SelectWithImages } from "@/components/select-with-images";
 
 const InventoryPage = () => {
+    const [selectedProjectId, setSelectedProjectId] = useState<Id<"project"> | null>(null);
 
-    const filteredAvailableDummy = dummy.filter((item) => item.status === "Available");
-    const filteredReservedDummy = dummy.filter((item) => item.status === "Reserved");
-    const filteredSoldDummy = dummy.filter((item) => item.status === "Sold");
-    const filteredDueDummy = dummy.filter((item) => item.status === "Due");
+    const properties = useQuery(api.property.get, {
+        projectId: selectedProjectId ?? undefined
+    });
+
+    console.log(properties)
+
+    const availableProperties = useQuery(api.property.getByStatus, {
+        projectId: selectedProjectId ?? undefined,
+        status: "available"
+    });
+
+    const reservedProperties = useQuery(api.property.getByStatus, {
+        projectId: selectedProjectId ?? undefined,
+        status: "reserved"
+    });
+
+    const soldProperties = useQuery(api.property.getByStatus, {
+        projectId: selectedProjectId ?? undefined,
+        status: "sold"
+    });
+
+    const dueProperties = useQuery(api.property.getByStatus, {
+        projectId: selectedProjectId ?? undefined,
+        status: "due"
+    });
 
     return (
         <section
             className="flex flex-col justify-start items-center pt-8 min-h-screen h-full"
         >
+            <SelectWithImages onProjectSelect={setSelectedProjectId} />
+
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 w-full px-[50px]">
                 <InventoryCard
-                    count={126}
+                    count={properties?.length ?? 0}
                     title="Total Properties"
                 />
-
                 <InventoryCard
-                    count={63}
+                    count={availableProperties?.length ?? 0}
                     title="Available Properties"
                 />
 
                 <InventoryCard
-                    count={17}
+                    count={reservedProperties?.length ?? 0}
                     title="Reserved Properties"
                 />
 
                 <InventoryCard
-                    count={46}
+                    count={soldProperties?.length ?? 0}
                     title="Sold Properties"
                 />
             </div>
@@ -50,7 +80,7 @@ const InventoryPage = () => {
                     <TabsContent value="all" className="space-y-4">
                         <DataTable
                             columns={inventoryColumns}
-                            data={dummy}
+                            data={properties ?? []}
                             isInventory
                             placeholder="Search a property"
                             search="lot"
@@ -60,7 +90,7 @@ const InventoryPage = () => {
                     <TabsContent value="available" className="space-y-4">
                         <DataTable
                             columns={inventoryColumns}
-                            data={filteredAvailableDummy}
+                            data={availableProperties ?? []}
                             isInventory
                             placeholder="Search a property"
                             search="lot"
@@ -70,7 +100,7 @@ const InventoryPage = () => {
                     <TabsContent value="reserved" className="space-y-4">
                         <DataTable
                             columns={inventoryColumns}
-                            data={filteredReservedDummy}
+                            data={reservedProperties ?? []}
                             isInventory
                             placeholder="Search a property"
                             search="lot"
@@ -80,7 +110,7 @@ const InventoryPage = () => {
                     <TabsContent value="sold" className="space-y-4">
                         <DataTable
                             columns={inventoryColumns}
-                            data={filteredSoldDummy}
+                            data={soldProperties ?? []}
                             isInventory
                             placeholder="Search a property"
                             search="lot"
@@ -90,7 +120,7 @@ const InventoryPage = () => {
                     <TabsContent value="due" className="space-y-4">
                         <DataTable
                             columns={inventoryColumns}
-                            data={filteredDueDummy}
+                            data={dueProperties ?? []}
                             isInventory
                             placeholder="Search a property"
                             search="lot"

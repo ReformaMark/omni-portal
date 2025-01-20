@@ -54,4 +54,29 @@ export default defineSchema({
     }).searchIndex("realtyName", {
         searchField: "realtyName",
     }),
+    property: defineTable({
+        projectId: v.id("project"),
+        lotId: v.string(),
+        block: v.string(),
+        lot: v.string(),
+        lotArea: v.number(),
+        pricePerSqm: v.number(),
+        totalContractPrice: v.number(),
+        netContractPrice: v.number(),
+        totalSellingPrice: v.number(),
+        monthlyAmortization: v.number(),
+        term: v.number(),
+        status: v.union(
+            v.literal("available"),
+            v.literal("reserved"),
+            v.literal("sold"),
+            v.literal("due")
+        ),
+        createdAt: v.number(),
+        updatedAt: v.number(),
+    }).searchIndex("by_project", {
+        searchField: "projectId",
+    }).searchIndex("by_status", {
+        searchField: "status",
+    })
 })

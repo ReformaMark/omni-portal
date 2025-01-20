@@ -1,14 +1,25 @@
 //inventory dummy
 
-export interface DummyType {
-    lotId: number
-    block: string
-    lot: string
-    lotArea: number
-    pricePerSqm: number
-    totalSellingPrice: number
-    monthlyAmortization: number
-    status: string
+import { Id } from "../convex/_generated/dataModel"
+
+export type PropertyStatus = "available" | "reserved" | "sold" | "due";
+
+export interface PropertyType {
+    _id: Id<"property">;
+    lotId: string;
+    _creationTime: number;
+    projectId: Id<"project">;
+    block: string;
+    lot: string;
+    lotArea: number;
+    pricePerSqm: number;
+    totalContractPrice: number;
+    netContractPrice: number;
+    totalSellingPrice: number;
+    monthlyAmortization: number;
+    term: number;
+    status: PropertyStatus;
+    dueDate?: number;
 }
 
 export const dummy = [

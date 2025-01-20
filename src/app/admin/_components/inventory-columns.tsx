@@ -7,10 +7,10 @@ import { formatPrice } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { DummyType } from "../../../../data/dummy";
+import { PropertyType } from "../../../../data/dummy";
 import { InventoryEditModal } from "./inventory-edit-modal";
 
-export const inventoryColumns: ColumnDef<DummyType>[] = [
+export const inventoryColumns: ColumnDef<PropertyType>[] = [
     {
         accessorKey: "lotId",
         header: () => <div className="text-center">LOT ID NO.</div>,
@@ -190,7 +190,7 @@ export const inventoryColumns: ColumnDef<DummyType>[] = [
                                 </div>
                             </div>
 
-                            {(data.status === "Sold" || data.status === "Due") && (
+                            {(data.status === "sold" || data.status === "due") && (
                                 <div className="px-4 pb-4">
                                     <div className="grid grid-cols-2 gap-[1px] bg-gray-200 rounded-lg overflow-hidden font-semibold border border-lightGray">
                                         <div className="bg-[#EDEDED] text-gray p-2">BUYER&apos;S NAME</div>
@@ -213,7 +213,7 @@ export const inventoryColumns: ColumnDef<DummyType>[] = [
 
                                         <div className="bg-[#EDEDED] text-gray p-2">2ND MA - 60TH MA</div>
                                         <div
-                                            className={`p-2 text-center ${data.status === "Due" ? "bg-[#FCE6E8]" : "bg-white"}`}
+                                            className={`p-2 text-center ${data.status === "due" ? "bg-[#FCE6E8]" : "bg-white"}`}
                                         >
                                             4,500.00
                                         </div>
@@ -221,7 +221,7 @@ export const inventoryColumns: ColumnDef<DummyType>[] = [
                                 </div>
                             )}
 
-                            {data.status === "Reserved" && (
+                            {data.status === "reserved" && (
                                 <div className="px-4 pb-4">
                                     <div className="grid grid-cols-2 gap-[1px] bg-gray-200 rounded-lg overflow-hidden font-semibold border border-lightGray">
                                         <div className="bg-[#EDEDED] text-gray p-2">CLIENT</div>
