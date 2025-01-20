@@ -1,10 +1,9 @@
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 export interface ProjectDummyType {
     projectName: string;
     tagName: string;
     projectLocation: string;
-    photo?: string | StaticImport;
+    photo?: string | null;
 }
 
 export const projectDummy: ProjectDummyType[] = [

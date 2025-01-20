@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ArrowUpRightFromSquare } from "lucide-react";
 
@@ -39,5 +39,21 @@ export const create = mutation({
                 tagName: args.tagName,
                 photo: args.storageId,
             })
+    }
+})
+
+export const get = query({
+    args: {},
+    handler: async (ctx) => {
+        const projects = await ctx.db
+            .query("project")
+            .collect()
+
+        return Promise.all(
+            projects.map(async (project) => ({
+                ...project,
+                photo: await ctx.storage.getUrl(project.photo)
+            }))
+        )
     }
 })
