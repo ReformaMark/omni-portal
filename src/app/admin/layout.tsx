@@ -4,6 +4,7 @@ import { ConvexClientProvider } from "@/components/convex-client-provider"
 import { Header } from "@/components/headerTab"
 import { AppSidebar } from "@/components/sidebar"
 import { SidebarProvider } from "@/components/ui/sidebar"
+import { Toaster } from "@/components/ui/sonner"
 import "@/lib/globals.css"
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server"
 import { Metadata } from "next"
@@ -39,7 +40,8 @@ export default function AdminLayout({
                                     <Header />
                                     <div className="md:flex">
                                         <AppSidebar />
-                                        <main className="flex-1 min-h-screen">{children}</main>
+                                        <main className="flex-1 min-h-screen pt-[70px]">{children}</main>
+                                        <Toaster />
                                     </div>
                                 </div>
                             </SidebarProvider>

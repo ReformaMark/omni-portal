@@ -42,6 +42,8 @@ export default defineSchema({
         tagName: v.string(),
         projectLocation: v.string(),
         photo: v.string(),
+    }).searchIndex("projectName", {
+        searchField: "projectName",
     }),
     realty: defineTable({
         realtyName: v.string(),
