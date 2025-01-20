@@ -1,30 +1,58 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useQuery } from "convex/react"
-import { Loader2Icon, MapPin, SquarePen } from "lucide-react"
+import { Loader2Icon, MapPin, SquarePen, Trash2Icon } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import { api } from "../../../../../convex/_generated/api"
 import { ProjectDummyType } from "../../../../../data/dummy-project"
 import { EditProjectModal } from "./edit-project-modal"
-
+import { useMutation } from "@tanstack/react-query";
+import { useConvexMutation } from "@convex-dev/react-query"
+import { useConfirm } from "@/hooks/use-confirm"
+import { toast } from "sonner"
+import { Id } from "../../../../../convex/_generated/dataModel"
 
 interface Project {
-    _id: string
-    projectName: string
-    tagName: string
-    projectLocation: string
-    photo: string | null
+    _id: Id<"project">;
+    projectName: string;
+    tagName: string;
+    projectLocation: string;
+    photo: string | null;
 }
 
 interface ProjectCardProps {
-    project: Project
+    project: Project;
 }
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
     const [open, setOpen] = useState(false)
     const [editOpen, setEditOpen] = useState(false)
     const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+
+    const { mutate: deleteProject, isPending } = useMutation({
+        mutationFn: useConvexMutation(api.projects.remove)
+    })
+
+    const [DeleteConfirmDialog, confirmDelete] = useConfirm(
+        "Delete Project",
+        "Are you sure you want to delete this project? This action cannot be undone."
+    )
+
+    const handleDelete = async () => {
+        const confirmed = await confirmDelete()
+
+        if (confirmed) {
+            try {
+                await deleteProject({ id: project._id })
+                toast.success("Project deleted successfully")
+                setOpen(false)
+                setSelectedProject(null)
+            } catch (error) {
+                toast.error("Failed to delete project")
+            }
+        }
+    }
 
     const handleCardClick = (project: Project) => {
         setSelectedProject(null)
@@ -88,7 +116,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
                         </DialogHeader>
                         <div className="border-t w-full" />
 
-                        <div className="text-gray flex justify-end w-full">
+                        <div className="text-gray flex justify-end w-full gap-3">
                             <SquarePen
                                 className="h-5 w-5 cursor-pointer"
                                 onClick={(e) => {
@@ -96,7 +124,12 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
                                     handleEditClick(selectedProject)
                                 }}
                             />
+                            <Trash2Icon
+                                className="h-5 w-5 cursor-pointer text-red-500"
+                                onClick={handleDelete}
+                            />
                         </div>
+
 
                         <div className="flex flex-row items-center gap-12">
                             <Image src={selectedProject.photo!} alt={selectedProject.projectName} width={200} height={200} className="rounded-md" />
@@ -108,6 +141,8 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
                     </DialogContent>
                 </Dialog>
             )}
+
+            <DeleteConfirmDialog />
 
             {selectedProject && (
                 <EditProjectModal

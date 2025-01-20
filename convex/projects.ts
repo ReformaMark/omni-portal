@@ -132,3 +132,25 @@ export const edit = mutation({
         });
     }
 })
+
+export const remove = mutation({
+    args: {
+        id: v.id("project"),
+    },
+    handler: async (ctx, args) => {
+        const adminId = await getAuthUserId(ctx);
+        if (!adminId) throw new ConvexError("Not authenticated");
+
+        const admin = await ctx.db.get(adminId);
+        if (!admin || admin.role !== "admin") {
+            throw new ConvexError("Unauthorized");
+        }
+
+        const existing = await ctx.db.get(args.id);
+        if (!existing) throw new ConvexError("Project not found");
+
+        await ctx.storage.delete(existing.photo);
+
+        await ctx.db.delete(args.id);
+    }
+})
