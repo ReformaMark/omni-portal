@@ -86,3 +86,34 @@ export const create = mutation({
         });
     },
 });
+
+export const edit = mutation({
+    args: {
+        id: v.id("property"),
+        block: v.string(),
+        lot: v.string(),
+        lotArea: v.number(),
+        pricePerSqm: v.number(),
+        totalContractPrice: v.number(),
+        netContractPrice: v.number(),
+        totalSellingPrice: v.number(),
+        monthlyAmortization: v.number(),
+        term: v.number(),
+    },
+    handler: async (ctx, args) => {
+        const adminId = await getAuthUserId(ctx);
+        if (!adminId) throw new Error("Unauthorized");
+
+        const admin = await ctx.db.get(adminId);
+        if (!admin || admin.role !== "admin") {
+            throw new Error("Unauthorized - Only admins can edit properties");
+        }
+
+        const { id, ...updates } = args;
+        
+        return await ctx.db.patch(id, {
+            ...updates,
+            updatedAt: Date.now(),
+        });
+    },
+});

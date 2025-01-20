@@ -21,7 +21,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { CreditCard, LandPlot, MapPin, Pencil, ReceiptText } from "lucide-react"
 import { useForm } from "react-hook-form"
 import z from "zod"
-import { DummyType } from "../../../../data/dummy"
+import { PropertyType } from "../../../../data/dummy"
+import { useMutation } from "convex/react"
+import { api } from "../../../../convex/_generated/api"
+import { toast } from "sonner"
 
 const formSchema = z.object({
     block: z.string().min(1, "Block is required"),
@@ -36,16 +39,20 @@ const formSchema = z.object({
 })
 
 interface InventoryEditModalProps {
-    data: DummyType;
+    data: PropertyType;
     open: boolean;
     onClose: () => void;
+    projectName?: string;
 }
 
 export const InventoryEditModal = ({
     data,
     onClose,
     open,
+    projectName,
 }: InventoryEditModalProps) => {
+    const editProperty = useMutation(api.property.edit);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -53,24 +60,29 @@ export const InventoryEditModal = ({
             lot: data.lot,
             lotArea: data.lotArea,
             monthlyAmortization: data.monthlyAmortization,
-            netContractPrice: data.pricePerSqm,
+            netContractPrice: data.netContractPrice,
             pricePerSqm: data.pricePerSqm,
-            term: 25,
-            totalContractPrice: 125000,
-            totalSellingPrice: 100000,
+            term: data.term,
+            totalContractPrice: data.totalContractPrice,
+            totalSellingPrice: data.totalSellingPrice,
         }
-    })
+    });
 
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+            await editProperty({
+                id: data._id,
+                ...values,
+            });
 
-        // TODO: WHEN SUCCESS SEND API BACKEND THEN PROCEED TO FORM.RESET
-        console.log(values)
-
-        form.reset()
-        // toast?? can also add delay when submitting for decent animation
-        onClose()
-    }
-
+            toast.success("Property updated successfully");
+            form.reset();
+            onClose();
+        } catch (error) {
+            toast.error("Failed to update property");
+            console.error(error);
+        }
+    };
     return (
         <Dialog
             open={open}
@@ -87,7 +99,7 @@ export const InventoryEditModal = ({
                     <DialogDescription
                         className="text-muted-foreground text-xs ml-[29px]"
                     >
-                        Living Water Subdivision
+                        {projectName ?? "Loading..."}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -276,7 +288,7 @@ export const InventoryEditModal = ({
                                 type="submit"
                                 className="bg-dark"
                             >
-                                Add
+                                Save changes
                             </Button>
                         </div>
                     </form>

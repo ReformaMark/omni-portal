@@ -9,6 +9,8 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { PropertyType } from "../../../../data/dummy";
 import { InventoryEditModal } from "./inventory-edit-modal";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 
 export const inventoryColumns: ColumnDef<PropertyType>[] = [
     {
@@ -107,6 +109,9 @@ export const inventoryColumns: ColumnDef<PropertyType>[] = [
             const [showEditModal, setShowEditModal] = useState(false)
 
             const data = row.original
+            const project = useQuery(api.projects.getById,
+                data.projectId ? { id: data.projectId } : "skip"
+            );
 
             return (
                 <>
@@ -257,6 +262,7 @@ export const inventoryColumns: ColumnDef<PropertyType>[] = [
                         data={data}
                         onClose={() => setShowEditModal(false)}
                         open={showEditModal}
+                        projectName={project?.projectName}
                     />
                 </>
             )
