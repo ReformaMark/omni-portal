@@ -51,5 +51,7 @@ export default defineSchema({
         contactPerson: v.string(),
         contactNumber: v.string(),
         photo: v.string(),
+    }).searchIndex("realtyName", {
+        searchField: "realtyName",
     }),
 })

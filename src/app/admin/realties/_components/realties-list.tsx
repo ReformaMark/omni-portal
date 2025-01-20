@@ -5,11 +5,26 @@ import { Input } from "@/components/ui/input"
 import { VerticalSeparator } from "@/components/vertical-separator"
 import { PlusIcon } from "lucide-react"
 import { RealtyCard } from "./realty-card"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { AddRealtyModal } from "./add-realty-modal"
+import { useDebounce } from "@/hooks/use-debounce"
+import { useQuery } from "convex/react"
+import { api } from "../../../../../convex/_generated/api"
 
 export const RealtiesList = () => {
     const [open, setOpen] = useState<boolean>(false)
+    const [search, setSearch] = useState("")
+    const debouncedSearch = useDebounce(search, 300)
+
+    const realties = useQuery(api.realty.search, {
+        query: debouncedSearch
+    })
+
+    const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value)
+    }, [])
+
+    console.log(realties)
 
     return (
         <>
@@ -23,6 +38,8 @@ export const RealtiesList = () => {
                         className="rounded-2xl max-md:w-[75%]"
                         type="text"
                         placeholder="Search realty"
+                        value={search}
+                        onChange={handleSearch}
                     />
 
                     <VerticalSeparator />
@@ -40,7 +57,14 @@ export const RealtiesList = () => {
                     </Button>
                 </div>
 
-                <RealtyCard />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-[1300px]">
+                    {realties?.map((realty) => (
+                        <RealtyCard
+                            key={realty._id}
+                            realty={realty}
+                        />
+                    ))}
+                </div>
             </div>
 
             <AddRealtyModal

@@ -5,13 +5,27 @@ import Image from "next/image"
 import { useState } from "react"
 import { realtyDummy, RealtyDummyType } from "../../../../../data/dummy-realty"
 import { EditRealtyModal } from "./edit-realty-modal"
+import { Id } from "../../../../../convex/_generated/dataModel"
 
-export const RealtyCard = () => {
+interface Realty {
+    _id: Id<"realty">;
+    realtyName: string;
+    tagName: string;
+    contactPerson: string;
+    contactNumber: string;
+    photo: string | null;
+}
+
+interface RealtyCardProps {
+    realty: Realty;
+}
+
+export const RealtyCard = ({ realty }: RealtyCardProps) => {
     const [open, setOpen] = useState(false)
-    const [selectedRealty, setSelectedRealty] = useState<RealtyDummyType | null>(null)
     const [editOpen, setEditOpen] = useState(false)
+    const [selectedRealty, setSelectedRealty] = useState<Realty | null>(null)
 
-    const handleCardClick = (project: RealtyDummyType) => {
+    const handleCardClick = (project: Realty) => {
         setSelectedRealty(null)
         setEditOpen(false)
 
@@ -21,7 +35,7 @@ export const RealtyCard = () => {
         }, 0)
     }
 
-    const handleEditClick = (project: RealtyDummyType) => {
+    const handleEditClick = (project: Realty) => {
         setSelectedRealty(null)
         setOpen(false)
 
@@ -43,34 +57,26 @@ export const RealtyCard = () => {
 
     return (
         <>
-            <div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-[1300px]"
+            <Card
+                className="cursor-pointer"
+                onClick={() => handleCardClick(realty)}
             >
-                {realtyDummy.map((p) => (
-                    <>
-                        <Card
-                            className="cursor-pointer"
-                            onClick={() => handleCardClick(p)}
-                        >
-                            <CardContent
-                                className="flex flex-col gap-2 py-3"
-                            >
-                                <Image
-                                    src={p.photo!}
-                                    alt={p.realtyName}
-                                    width={500}
-                                    height={500}
-                                    className="rounded-md"
-                                />
+                <CardContent
+                    className="flex flex-col gap-2 py-3"
+                >
+                    <Image
+                        src={realty.photo!}
+                        alt={realty.realtyName}
+                        width={500}
+                        height={500}
+                        className="rounded-md"
+                    />
 
-                                <p className="text-center font-bold text-dark">
-                                    {p.tagName}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </>
-                ))}
-            </div>
+                    <p className="text-center font-bold text-dark">
+                        {realty.tagName}
+                    </p>
+                </CardContent>
+            </Card>
 
             {selectedRealty && (
                 <Dialog open={open} onOpenChange={handleDialogClose}>

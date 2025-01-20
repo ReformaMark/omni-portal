@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values"
-import { mutation } from "./_generated/server"
+import { mutation, query } from "./_generated/server"
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 
@@ -35,5 +35,55 @@ export const create = mutation({
                 contactNumber: args.contactNumber,
                 photo: args.storageId,
             })
+    }
+})
+
+export const get = query({
+    args: {},
+    handler: async (ctx) => {
+        const realties = await ctx.db
+            .query("realty")
+            .collect()
+
+        return Promise.all(
+            realties.map(async (realty) => ({
+                ...realty,
+                photo: await ctx.storage.getUrl(realty.photo)
+            }))
+        )
+    }
+})
+
+export const search = query({
+    args: {
+        query: v.string()
+    },
+    handler: async (ctx, { query }) => {
+        if (query === "") {
+            const realty = await ctx.db
+                .query("realty")
+                .collect()
+
+            return Promise.all(
+                realty.map(async (realty) => ({
+                    ...realty,
+                    photo: await ctx.storage.getUrl(realty.photo)
+                }))
+            )
+        }
+
+        const realty = await ctx.db
+            .query("realty")
+            .withSearchIndex("realtyName", (q) =>
+                q.search("realtyName", query)
+            )
+            .collect()
+
+        return Promise.all(
+            realty.map(async (realty) => ({
+                ...realty,
+                photo: await ctx.storage.getUrl(realty.photo)
+            }))
+        )
     }
 })
