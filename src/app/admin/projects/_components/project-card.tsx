@@ -24,9 +24,9 @@ interface ProjectCardProps {
 export const ProjectCard = ({ project }: ProjectCardProps) => {
     const [open, setOpen] = useState(false)
     const [editOpen, setEditOpen] = useState(false)
-    const [selectedProject, setSelectedProject] = useState<ProjectDummyType | null>(null)
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
-    const handleCardClick = (project: ProjectDummyType) => {
+    const handleCardClick = (project: Project) => {
         setSelectedProject(null)
         setEditOpen(false)
 
@@ -36,7 +36,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
         }, 0)
     }
 
-    const handleEditClick = (project: ProjectDummyType) => {
+    const handleEditClick = (project: Project) => {
         setSelectedProject(null)
         setOpen(false)
 
@@ -111,9 +111,9 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 
             {selectedProject && (
                 <EditProjectModal
-                    open={editOpen}
+                    isOpen={editOpen}
                     onClose={handleEditModalClose}
-                    data={selectedProject}
+                    project={selectedProject}
                 />
             )}
         </>

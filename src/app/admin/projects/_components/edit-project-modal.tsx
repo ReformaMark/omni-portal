@@ -23,6 +23,9 @@ import { useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import z from "zod"
 import { ProjectDummyType } from "../../../../../data/dummy-project"
+import { useMutation } from "convex/react"
+import { api } from "../../../../../convex/_generated/api"
+import { toast } from "sonner"
 
 const formSchema = z.object({
     projectName: z.string().min(1, "Project name is required"),
@@ -31,54 +34,80 @@ const formSchema = z.object({
 })
 
 interface EditProjectModalProps {
-    data: ProjectDummyType;
-    open: boolean;
+    project: {
+        _id: string;
+        projectName: string;
+        tagName: string;
+        projectLocation: string;
+        photo: string | null;
+    };
+    isOpen: boolean;
     onClose: () => void;
 }
 
 export const EditProjectModal = ({
-    data,
-    onClose,
-    open,
+    project,
+    isOpen,
+    onClose
 }: EditProjectModalProps) => {
-    const imageInput = useRef<HTMLInputElement>(null)
     const [selectedImage, setSelectedImage] = useState<File | null>(null)
-    const [imagePreview, setImagePreview] = useState<string | null>(null)
+    const [imagePreview, setImagePreview] = useState<string | null>(project.photo)
+    const imageInput = useRef<HTMLInputElement>(null)
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            setSelectedImage(file)
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string)
-            }
-            reader.readAsDataURL(file)
-        }
-    }
+    const generateUploadUrl = useMutation(api.projects.generateUploadUrl);
+    const editProject = useMutation(api.projects.edit);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            projectLocation: data.projectLocation,
-            projectName: data.projectName,
-            tagName: data.tagName,
+            projectName: project.projectName,
+            tagName: project.tagName,
+            projectLocation: project.projectLocation,
+        },
+    });
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
         }
-    })
+    };
 
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log(values)
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+            let storageId = undefined;
 
-        form.reset()
+            if (selectedImage) {
+                const postUrl = await generateUploadUrl();
+                const result = await fetch(postUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": selectedImage.type },
+                    body: selectedImage,
+                });
+                const { storageId: newStorageId } = await result.json();
+                storageId = newStorageId;
+            }
 
-        onClose()
-    }
+            await editProject({
+                id: project._id,
+                ...values,
+                ...(storageId && { storageId }),
+            });
+
+            toast.success("Project updated successfully");
+            onClose();
+        } catch (error) {
+            toast.error("Failed to update project");
+        }
+    };
 
     return (
-        <Dialog
-            open={open}
-            onOpenChange={onClose}
-        >
+        <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle
@@ -95,17 +124,17 @@ export const EditProjectModal = ({
 
                 <Form {...form}>
                     <form
-                        onSubmit={form.handleSubmit(handleSubmit)}
+                        onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-4"
                     >
-                        <div className="flex flex-col items-center gap-3">
+                        {/* <div className="flex flex-col items-center gap-3">
                             <div
                                 className="relative w-32 h-32 border-2 border-dotted rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
                                 onClick={() => document.getElementById("coverPhoto")?.click()}
                             >
                                 {selectedImage ? (
                                     <Image
-                                        src={imagePreview || "/placeholder.svg"}
+                                        src={imagePreview}
                                         alt="Preview"
                                         className="w-full h-full object-cover rounded-lg"
                                         width={400}
@@ -128,11 +157,34 @@ export const EditProjectModal = ({
                                                 disabled={selectedImage !== null}
                                                 className="hidden"
                                             />
-                                            {/* <p className="absolute text-xs top-[60px]">UPLOAD COVER PHOTO</p> */}
                                         </div>
                                     )}
                             </div>
                             <p className="text-xs">UPLOAD COVER PHOTO</p>
+                        </div> */}
+
+                        <div className="relative aspect-video">
+                            <Image
+                                src={imagePreview!}
+                                alt="Project"
+                                fill
+                                className="object-cover rounded-md"
+                            />
+                            <Button
+                                onClick={() => imageInput.current?.click()}
+                                type="button"
+                                variant="secondary"
+                                className="absolute bottom-2 right-2"
+                            >
+                                Change Image
+                            </Button>
+                            <input
+                                type="file"
+                                ref={imageInput}
+                                onChange={handleImageChange}
+                                className="hidden"
+                                accept="image/*"
+                            />
                         </div>
 
                         <div

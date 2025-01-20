@@ -6,6 +6,14 @@ export interface ProjectDummyType {
     photo?: string | null;
 }
 
+export interface EditProjectType {
+    _id: string;
+    projectName: string;
+    tagName: string;
+    projectLocation: string;
+    photo: string | null;
+}
+
 export const projectDummy: ProjectDummyType[] = [
     {
         projectLocation: "Bacoor, Rizal",

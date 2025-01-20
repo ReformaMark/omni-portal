@@ -89,3 +89,46 @@ export const search = query({
         )
     }
 })
+
+export const edit = mutation({
+    args: {
+        id: v.id("project"),
+        projectName: v.string(),
+        tagName: v.string(),
+        projectLocation: v.string(),
+        storageId: v.optional(v.id("_storage")),
+    },
+    handler: async (ctx, args) => {
+        const adminId = await getAuthUserId(ctx)
+        if (!adminId) throw new ConvexError("Not authenticated");
+
+        const admin = await ctx.db.get(adminId);
+        if (!admin || admin.role !== "admin") {
+            throw new ConvexError("Unauthorized - Only admins can create users");
+        }
+
+        const existing = await ctx.db.get(args.id);
+        if (!existing) throw new ConvexError("Project not found");
+
+        const existingName = await ctx.db
+            .query("project")
+            .filter((q) =>
+                q.and(
+                    q.eq(q.field("projectName"), args.projectName),
+                    q.neq(q.field("_id"), args.id)
+                )
+            )
+            .first();
+
+        if (existingName) {
+            throw new ConvexError("Project name already exists");
+        }
+
+        return await ctx.db.patch(args.id, {
+            projectName: args.projectName,
+            tagName: args.tagName,
+            projectLocation: args.projectLocation,
+            ...(args.storageId && { photo: args.storageId }),
+        });
+    }
+})
