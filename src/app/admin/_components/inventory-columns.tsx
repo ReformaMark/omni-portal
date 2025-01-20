@@ -2,16 +2,18 @@
 
 import { BadgeStatus } from "@/components/badge-status";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useConfirm } from "@/hooks/use-confirm";
 import { formatPrice } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
+import { useMutation, useQuery } from "convex/react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { api } from "../../../../convex/_generated/api";
 import { PropertyType } from "../../../../data/dummy";
 import { InventoryEditModal } from "./inventory-edit-modal";
-import { useQuery } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
-import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
 export const inventoryColumns: ColumnDef<PropertyType>[] = [
     {
@@ -128,10 +130,34 @@ export const inventoryColumns: ColumnDef<PropertyType>[] = [
             const [showModal, setShowModal] = useState(false)
             const [showEditModal, setShowEditModal] = useState(false)
 
+            const [DeleteConfirmDialog, confirmDelete] = useConfirm(
+                "Delete property",
+                "Are you sure you want to delete this property? This action cannot be undone."
+            )
+
+
             const data = row.original
             const project = useQuery(api.projects.getById,
                 data.projectId ? { id: data.projectId } : "skip"
             );
+
+            const remove = useMutation(api.property.remove)
+
+            const handleDelete = async () => {
+                const confirmed = await confirmDelete()
+
+                if (confirmed) {
+                    try {
+                        await remove({
+                            id: data._id
+                        })
+                        toast.success("Project deleted successfully")
+                    } catch (error) {
+                        toast.error("Failed to delete property")
+                        console.error(error)
+                    }
+                }
+            }
 
             return (
                 <>
@@ -158,6 +184,7 @@ export const inventoryColumns: ColumnDef<PropertyType>[] = [
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 p-0 text-red-600"
+                            onClick={handleDelete}
                         >
                             <Trash2 className="h-8 w-8" />
                         </Button>
@@ -284,6 +311,8 @@ export const inventoryColumns: ColumnDef<PropertyType>[] = [
                         open={showEditModal}
                         projectName={project?.projectName}
                     />
+
+                    <DeleteConfirmDialog />
                 </>
             )
         }

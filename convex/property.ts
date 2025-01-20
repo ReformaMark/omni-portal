@@ -110,7 +110,7 @@ export const edit = mutation({
         }
 
         const { id, ...updates } = args;
-        
+
         return await ctx.db.patch(id, {
             ...updates,
             updatedAt: Date.now(),
@@ -135,3 +135,20 @@ export const removeMany = mutation({
         return true;
     }
 });
+
+export const remove = mutation({
+    args: {
+        id: v.id("property")
+    },
+    handler: async (ctx, args) => {
+        const adminId = await getAuthUserId(ctx);
+        if (!adminId) throw new Error("Unauthorized");
+
+        const admin = await ctx.db.get(adminId);
+        if (!admin || admin.role !== "admin") {
+            throw new Error("Unauthorized - Only admins can delete properties");
+        }
+
+        await ctx.db.delete(args.id)
+    }
+})

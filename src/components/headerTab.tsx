@@ -7,15 +7,14 @@ import {
     SheetHeader,
     SheetTrigger
 } from "@/components/ui/sheet"
+import { useCurrentUser } from "@/hooks/use-current-user"
 import { cn } from "@/lib/utils"
 import { Bell, DownloadIcon, Loader2Icon, MenuIcon } from 'lucide-react'
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import HomeAvatar from "./home-avatar"
-import { SelectWithImages } from "./select-with-images"
 import { sidebarItems } from './sidebar'
 import { UserDropdown } from "./user-dropdown"
-import { useCurrentUser } from "@/hooks/use-current-user"
 
 
 interface NavItem {
