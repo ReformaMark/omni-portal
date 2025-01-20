@@ -1,17 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useQuery } from "convex/react"
-import { Loader2Icon, MapPin, SquarePen, Trash2Icon } from "lucide-react"
+import { useConfirm } from "@/hooks/use-confirm"
+import { useConvexMutation } from "@convex-dev/react-query"
+import { useMutation } from "@tanstack/react-query"
+import { MapPin, SquarePen, Trash2Icon } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
-import { api } from "../../../../../convex/_generated/api"
-import { ProjectDummyType } from "../../../../../data/dummy-project"
-import { EditProjectModal } from "./edit-project-modal"
-import { useMutation } from "@tanstack/react-query";
-import { useConvexMutation } from "@convex-dev/react-query"
-import { useConfirm } from "@/hooks/use-confirm"
 import { toast } from "sonner"
+import { api } from "../../../../../convex/_generated/api"
 import { Id } from "../../../../../convex/_generated/dataModel"
+import { EditProjectModal } from "./edit-project-modal"
 
 interface Project {
     _id: Id<"project">;
@@ -30,7 +28,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
     const [editOpen, setEditOpen] = useState(false)
     const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
-    const { mutate: deleteProject, isPending } = useMutation({
+    const { mutate: deleteProject } = useMutation({
         mutationFn: useConvexMutation(api.projects.remove)
     })
 

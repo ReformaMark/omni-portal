@@ -1,11 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { SquarePen } from "lucide-react"
+import { SquarePen, Trash2Icon } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
-import { realtyDummy, RealtyDummyType } from "../../../../../data/dummy-realty"
+import { useMutation } from "@tanstack/react-query"
 import { EditRealtyModal } from "./edit-realty-modal"
 import { Id } from "../../../../../convex/_generated/dataModel"
+import { useConvexMutation } from "@convex-dev/react-query"
+import { api } from "../../../../../convex/_generated/api"
+import { useConfirm } from "@/hooks/use-confirm"
+import { toast } from "sonner"
 
 interface Realty {
     _id: Id<"realty">;
@@ -25,22 +29,46 @@ export const RealtyCard = ({ realty }: RealtyCardProps) => {
     const [editOpen, setEditOpen] = useState(false)
     const [selectedRealty, setSelectedRealty] = useState<Realty | null>(null)
 
-    const handleCardClick = (project: Realty) => {
+    const { mutate: deleteRealty } = useMutation({
+        mutationFn: useConvexMutation(api.realty.remove)
+    })
+
+    const [DeleteConfirmDialog, confirmDelete] = useConfirm(
+        "Delete Realty",
+        "Are you sure you want to delete this realty? This action cannot be undone."
+    )
+
+    const handleDelete = async () => {
+        const confirmed = await confirmDelete()
+
+        if (confirmed) {
+            try {
+                await deleteRealty({ id: realty._id })
+                toast.success("Project deleted successfully")
+                setOpen(false)
+                setSelectedRealty(null)
+            } catch (error) {
+                toast.error("Failed to delete project")
+            }
+        }
+    }
+
+    const handleCardClick = (realty: Realty) => {
         setSelectedRealty(null)
         setEditOpen(false)
 
         setTimeout(() => {
-            setSelectedRealty(project)
+            setSelectedRealty(realty)
             setOpen(true)
         }, 0)
     }
 
-    const handleEditClick = (project: Realty) => {
+    const handleEditClick = (realty: Realty) => {
         setSelectedRealty(null)
         setOpen(false)
 
         setTimeout(() => {
-            setSelectedRealty(project)
+            setSelectedRealty(realty)
             setEditOpen(true)
         })
     }
@@ -87,13 +115,17 @@ export const RealtyCard = ({ realty }: RealtyCardProps) => {
                         </DialogHeader>
                         <div className="border-t w-full" />
 
-                        <div className="text-gray flex justify-end w-full">
+                        <div className="text-gray flex justify-end w-full gap-3">
                             <SquarePen
                                 className="h-5 w-5 cursor-pointer"
                                 onClick={(e) => {
                                     e.stopPropagation()
                                     handleEditClick(selectedRealty)
                                 }}
+                            />
+                            <Trash2Icon
+                                className="h-5 w-5 cursor-pointer text-red-500"
+                                onClick={handleDelete}
                             />
                         </div>
 
@@ -124,6 +156,8 @@ export const RealtyCard = ({ realty }: RealtyCardProps) => {
                     </DialogContent>
                 </Dialog>
             )}
+
+            <DeleteConfirmDialog />
 
             {selectedRealty && (
                 <EditRealtyModal
