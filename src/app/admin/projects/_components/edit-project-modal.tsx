@@ -17,15 +17,14 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { HousePlus, Pencil } from "lucide-react"
+import { useMutation } from "convex/react"
+import { Pencil } from "lucide-react"
 import Image from "next/image"
 import { useRef, useState } from "react"
 import { useForm } from "react-hook-form"
-import z from "zod"
-import { ProjectDummyType } from "../../../../../data/dummy-project"
-import { useMutation } from "convex/react"
-import { api } from "../../../../../convex/_generated/api"
 import { toast } from "sonner"
+import z from "zod"
+import { api } from "../../../../../convex/_generated/api"
 
 const formSchema = z.object({
     projectName: z.string().min(1, "Project name is required"),

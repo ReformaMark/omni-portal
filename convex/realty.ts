@@ -1,4 +1,4 @@
-import { ConvexError, v } from "convex/values"
+import { ConvexError, convexToJson, v } from "convex/values"
 import { mutation, query } from "./_generated/server"
 import { getAuthUserId } from "@convex-dev/auth/server";
 
@@ -85,5 +85,49 @@ export const search = query({
                 photo: await ctx.storage.getUrl(realty.photo)
             }))
         )
+    }
+})
+
+export const edit = mutation({
+    args: {
+        id: v.id("realty"),
+        realtyName: v.string(),
+        tagName: v.string(),
+        contactPerson: v.string(),
+        contactNumber: v.string(),
+        storageId: v.id("_storage"),
+    },
+    handler: async (ctx, args) => {
+        const adminId = await getAuthUserId(ctx)
+        if (!adminId) throw new ConvexError("Not authenticated");
+
+        const admin = await ctx.db.get(adminId);
+        if (!admin || admin.role !== "admin") {
+            throw new ConvexError("Unauthorized - Only admins can create users");
+        }
+
+        const existing = await ctx.db.get(args.id);
+        if (!existing) throw new ConvexError("Realty does not exist");
+
+        const existingName = await ctx.db
+            .query("realty")
+            .filter((q) =>
+                q.and(
+                    q.eq(q.field("realtyName"), args.realtyName),
+                    q.neq(q.field("_id"), args.id)
+                )
+            )
+            .first()
+
+        if (existingName) throw new ConvexError("Realty name already exists");
+
+        return await ctx.db
+            .patch(args.id, {
+                realtyName: args.realtyName,
+                tagName: args.tagName,
+                contactPerson: args.contactPerson,
+                contactNumber: args.contactNumber,
+                photo: args.storageId,
+            })
     }
 })

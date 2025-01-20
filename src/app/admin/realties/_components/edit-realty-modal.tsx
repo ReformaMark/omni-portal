@@ -23,6 +23,10 @@ import { useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import z from "zod"
 import { RealtyDummyType } from "../../../../../data/dummy-realty"
+import { useMutation } from "convex/react"
+import { api } from "../../../../../convex/_generated/api"
+import { Id } from "../../../../../convex/_generated/dataModel"
+import { toast } from "sonner"
 
 const formSchema = z.object({
     realtyName: z.string().min(1, "Realty name is required."),
@@ -32,21 +36,39 @@ const formSchema = z.object({
 })
 
 interface EditRealtyModalProps {
-    data: RealtyDummyType;
+    realty: {
+        _id: Id<"realty">;
+        realtyName: string;
+        tagName: string;
+        contactPerson: string;
+        contactNumber: string;
+        photo: string | null;
+    }
     open: boolean;
     onClose: () => void;
 }
 
 export const EditRealtyModal = ({
-    data,
+    realty,
     onClose,
     open,
 }: EditRealtyModalProps) => {
-    // const generateUploadUrl = useMutation(api.projects.generateUploadUrl);
-
-    const imageInput = useRef<HTMLInputElement>(null)
     const [selectedImage, setSelectedImage] = useState<File | null>(null)
-    const [imagePreview, setImagePreview] = useState<string | null>(null)
+    const [imagePreview, setImagePreview] = useState<string | null>(realty.photo)
+    const imageInput = useRef<HTMLInputElement>(null)
+
+    const generateUploadUrl = useMutation(api.projects.generateUploadUrl);
+    const editRealty = useMutation(api.realty.edit);
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            contactNumber: realty.contactNumber,
+            contactPerson: realty.contactPerson,
+            realtyName: realty.realtyName,
+            tagName: realty.tagName,
+        }
+    })
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -60,22 +82,35 @@ export const EditRealtyModal = ({
         }
     }
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            contactNumber: data.contactNumber,
-            contactPerson: data.contactPerson,
-            realtyName: data.realtyName,
-            tagName: data.tagName,
+    const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+            let storageId = undefined;
+
+            if (selectedImage) {
+                const postUrl = await generateUploadUrl();
+                const result = await fetch(postUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": selectedImage.type },
+                    body: selectedImage,
+                });
+                const { storageId: newStorageId } = await result.json();
+                storageId = newStorageId;
+            }
+
+            await editRealty({
+                id: realty._id,
+                realtyName: values.realtyName,
+                tagName: values.tagName,
+                contactPerson: values.contactPerson,
+                contactNumber: values.contactNumber,
+                ...(storageId && { storageId }),
+            })
+
+            toast.success("Realty updated successfully");
+            onClose();
+        } catch (error) {
+            toast.error("Failed to update realty");
         }
-    })
-
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log(values)
-
-        form.reset()
-
-        onClose()
     }
 
     return (
@@ -174,7 +209,7 @@ export const EditRealtyModal = ({
                                     className="relative mb-2 w-32 h-32 border-2 border-dotted rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
                                     onClick={() => document.getElementById("coverPhoto")?.click()}
                                 >
-                                    {selectedImage ? (
+                                    {(selectedImage || imagePreview) ? (
                                         <Image
                                             src={imagePreview || "/placeholder.svg"}
                                             alt="Preview"

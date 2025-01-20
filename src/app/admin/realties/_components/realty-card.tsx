@@ -129,7 +129,7 @@ export const RealtyCard = ({ realty }: RealtyCardProps) => {
                 <EditRealtyModal
                     open={editOpen}
                     onClose={handleEditModalClose}
-                    data={selectedRealty}
+                    realty={selectedRealty}
                 />
             )}
         </>

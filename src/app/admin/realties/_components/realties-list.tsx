@@ -24,8 +24,6 @@ export const RealtiesList = () => {
         setSearch(e.target.value)
     }, [])
 
-    console.log(realties)
-
     return (
         <>
             <div
