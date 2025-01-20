@@ -1,19 +1,30 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { useQuery } from "convex/react"
 import { Loader2Icon, MapPin, SquarePen } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
-import { projectDummy, ProjectDummyType } from "../../../../../data/dummy-project"
-import { EditProjectModal } from "./edit-project-modal"
-import { useQuery } from "convex/react"
 import { api } from "../../../../../convex/_generated/api"
+import { ProjectDummyType } from "../../../../../data/dummy-project"
+import { EditProjectModal } from "./edit-project-modal"
 
-export const ProjectCard = () => {
+
+interface Project {
+    _id: string
+    projectName: string
+    tagName: string
+    projectLocation: string
+    photo: string | null
+}
+
+interface ProjectCardProps {
+    project: Project
+}
+
+export const ProjectCard = ({ project }: ProjectCardProps) => {
     const [open, setOpen] = useState(false)
-    const [selectedProject, setSelectedProject] = useState<ProjectDummyType | null>(null)
     const [editOpen, setEditOpen] = useState(false)
-
-    const projects = useQuery(api.projects.get)
+    const [selectedProject, setSelectedProject] = useState<ProjectDummyType | null>(null)
 
     const handleCardClick = (project: ProjectDummyType) => {
         setSelectedProject(null)
@@ -47,36 +58,26 @@ export const ProjectCard = () => {
 
     return (
         <>
-            <div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-[1300px]"
+            <Card
+                className="cursor-pointer"
+                onClick={() => handleCardClick(project)}
             >
-                {projects ?
-                    projects.map((p) => (
-                        <>
-                            <Card
-                                className="cursor-pointer"
-                                onClick={() => handleCardClick(p)}
-                            >
-                                <CardContent
-                                    className="flex flex-col gap-2 py-3"
-                                >
-                                    <Image
-                                        src={p.photo!}
-                                        alt={p.projectName}
-                                        width={500}
-                                        height={500}
-                                        className="rounded-md"
-                                    />
+                <CardContent
+                    className="flex flex-col gap-2 py-3"
+                >
+                    <Image
+                        src={project.photo!}
+                        alt={project.projectName}
+                        width={500}
+                        height={500}
+                        className="rounded-md"
+                    />
 
-                                    <p className="text-center font-bold text-dark">
-                                        {p.tagName}
-                                    </p>
-                                </CardContent>
-                            </Card>
-                        </>
-                    )) : <Loader2Icon className="w-10 h-10 animate-spin" />
-                }
-            </div>
+                    <p className="text-center font-bold text-dark">
+                        {project.tagName}
+                    </p>
+                </CardContent>
+            </Card>
 
             {selectedProject && (
                 <Dialog open={open} onOpenChange={handleDialogClose}>

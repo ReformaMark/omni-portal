@@ -57,3 +57,35 @@ export const get = query({
         )
     }
 })
+
+export const search = query({
+    args: { query: v.string() },
+    handler: async (ctx, { query }) => {
+        if (query === "") {
+            const projects = await ctx.db
+                .query("project")
+                .collect();
+
+            return Promise.all(
+                projects.map(async (project) => ({
+                    ...project,
+                    photo: await ctx.storage.getUrl(project.photo)
+                }))
+            );
+        }
+
+        const projects = await ctx.db
+            .query("project")
+            .withSearchIndex("projectName", (q) =>
+                q.search("projectName", query)
+            )
+            .collect()
+
+        return Promise.all(
+            projects.map(async (project) => ({
+                ...project,
+                photo: await ctx.storage.getUrl(project.photo)
+            }))
+        )
+    }
+})
