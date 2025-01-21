@@ -22,9 +22,9 @@ export const UserDropdown = ({
         <DropdownMenu>
             <DropdownMenuTrigger className="focus-visible:outline-none">
                 <div className="flex items-center gap-2 bg-accent rounded-md px-2 text-accent-foreground cursor-pointer">
-                    <Avatar className="h-7 w-7">
+                    <Avatar className="h-6 w-6 p-[15px] bg-dark rounded-full">
                         <AvatarImage src={avatarUrl} alt={name} />
-                        <AvatarFallback>{name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <AvatarFallback className="text-white font-normal">{name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     <div className="hidden md:block text-sm mr-5">
                         <div className="font-medium">{name}</div>

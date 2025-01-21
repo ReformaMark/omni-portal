@@ -135,7 +135,7 @@ export function Header() {
 
                     {user ? (
                         <UserDropdown
-                            avatarUrl="https://github.com/shadcn.png"
+                            avatarUrl={user.image!}
                             name={fullname}
                             role={user.role!}
                             key={user.accountId!}

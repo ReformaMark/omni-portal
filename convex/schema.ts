@@ -24,19 +24,6 @@ export default defineSchema({
 
         realtyId: v.optional(v.id("realty"))
     }),
-    inventory: defineTable({
-        lotId: v.string(),
-        block: v.string(),
-        lot: v.string(),
-        inventoryStatus: v.string(),
-        lotArea: v.number(),
-        pricePerSqm: v.number(),
-        totalSellingPrice: v.number(),
-        totalContractPrice: v.number(),
-        netContractPrice: v.number(),
-        monthlyAmortization: v.number(),
-        term: v.string(),
-    }),
     project: defineTable({
         projectName: v.string(),
         tagName: v.string(),

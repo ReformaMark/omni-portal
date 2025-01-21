@@ -1,13 +1,16 @@
 import { Card, CardContent } from "@/components/ui/card"
+import { cn } from "@/lib/utils";
 
 interface InventoryCardProps {
     title: string;
     count: number;
+    difference: number;
 }
 
 export const InventoryCard = ({
     count,
     title,
+    difference
 }: InventoryCardProps) => {
     return (
         <Card className="w-full h-full py-3">
@@ -21,8 +24,13 @@ export const InventoryCard = ({
                     </h1>
 
                     <p className="text-sm text-muted-foreground">
-                        <span className="text-dark">+12 </span>
-                        last month
+                        <span className={cn("text-dark", {
+                            "text-green-500": difference > 0,
+                            "text-red-500": difference < 0
+                        })}>
+                            {difference > 0 ? "+" : ""}{difference}
+                        </span>
+                        {" "}last month
                     </p>
                 </div>
             </CardContent>

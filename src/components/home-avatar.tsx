@@ -7,7 +7,7 @@ const HomeAvatar = () => {
             <Avatar
                 className="hidden md:block"
             >
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarImage src="/placeholder.svg" alt="@shadcn" />
                 <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <span className="text-lg font-semibold">OMNI Portal</span>

@@ -1,17 +1,16 @@
 "use client"
 
 import { DataTable } from "@/components/data-table";
-import { SelectWithImages } from "@/components/select-with-images";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useProjectStore } from "@/store/project-store";
 import { useQuery } from "convex/react";
 import { useCallback, useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { PropertyType } from "../../../../data/dummy";
 import { InventoryActions } from "../_components/inventory-actions";
 import { InventoryCard } from "../_components/inventory-card";
 import { inventoryColumns } from "../_components/inventory-columns";
-import { PropertyType } from "../../../../data/dummy";
-import { useProjectStore } from "@/store/project-store";
 
 const InventoryPage = () => {
     const selectedProjectId = useProjectStore(state => state.selectedProjectId)
@@ -31,6 +30,10 @@ const InventoryPage = () => {
         projectId: selectedProjectId ?? undefined
     })
 
+    const stats = useQuery(api.property.getStats, {
+        projectId: selectedProjectId ?? undefined
+    });
+
     const availableProperties = properties?.filter(property => property.status === "available");
 
     const reservedProperties = properties?.filter(property => property.status === "reserved");
@@ -43,26 +46,28 @@ const InventoryPage = () => {
         <section
             className="flex flex-col justify-start items-center pt-8 min-h-screen h-full"
         >
-            {/* <SelectWithImages onProjectSelect={setSelectedProjectId} /> */}
-
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 w-full px-[50px]">
                 <InventoryCard
                     count={properties?.length ?? 0}
                     title="Total Properties"
+                    difference={stats?.total.difference ?? 0}
                 />
                 <InventoryCard
                     count={availableProperties?.length ?? 0}
                     title="Available Properties"
+                    difference={stats?.available.difference ?? 0}
                 />
 
                 <InventoryCard
                     count={reservedProperties?.length ?? 0}
                     title="Reserved Properties"
+                    difference={stats?.reserved.difference ?? 0}
                 />
 
                 <InventoryCard
                     count={soldProperties?.length ?? 0}
                     title="Sold Properties"
+                    difference={stats?.sold.difference ?? 0}
                 />
             </div>
 

@@ -152,3 +152,46 @@ export const remove = mutation({
         await ctx.db.delete(args.id)
     }
 })
+
+export const getStats = query({
+    args: {
+        projectId: v.optional(v.id("project"))
+    },
+    handler: async (ctx, args) => {
+        const now = Date.now();
+        const lastMonth = now - 30 * 24 * 60 * 60 * 1000; // 30 days ago
+
+        let query = ctx.db.query("property");
+
+        if (args.projectId) {
+            query = query.filter(q => q.eq(q.field("projectId"), args.projectId));
+        }
+
+        const properties = await query.collect();
+
+        const currentMonthProperties = properties.filter(p => p._creationTime >= lastMonth);
+        const lastMonthProperties = properties.filter(p => p._creationTime < lastMonth);
+
+        const getCountByStatus = (props: any[], status: string) =>
+            props.filter(p => p.status === status).length;
+
+        return {
+            total: {
+                current: properties.length,
+                difference: properties.length - lastMonthProperties.length
+            },
+            available: {
+                current: getCountByStatus(properties, "available"),
+                difference: getCountByStatus(currentMonthProperties, "available")
+            },
+            reserved: {
+                current: getCountByStatus(properties, "reserved"),
+                difference: getCountByStatus(currentMonthProperties, "reserved")
+            },
+            sold: {
+                current: getCountByStatus(properties, "sold"),
+                difference: getCountByStatus(currentMonthProperties, "sold")
+            }
+        };
+    }
+})
