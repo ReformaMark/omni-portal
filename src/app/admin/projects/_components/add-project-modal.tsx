@@ -24,6 +24,7 @@ import { z } from "zod";
 import { api } from "../../../../../convex/_generated/api";
 import { useMutation } from "convex/react";
 import { toast } from "sonner";
+import { getConvexErrorMessage } from "@/lib/utils";
 
 const formSchema = z.object({
     projectName: z.string().min(1, "Project name is required."),
@@ -45,6 +46,7 @@ export const AddProjectModal = ({
 
     const [selectedImage, setSelectedImage] = useState<File | null>(null)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
+    const [pending, setPending] = useState(false);
     const imageInput = useRef<HTMLInputElement | null>(null)
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +62,7 @@ export const AddProjectModal = ({
     }
 
     const handleAddProject = async (values: z.infer<typeof formSchema>) => {
+        setPending(true);
         try {
             const postUrl = await generateUploadUrl()
 
@@ -86,8 +89,11 @@ export const AddProjectModal = ({
 
             onOpen(false)
         } catch (error) {
-            toast.error("Failed to add project")
+            const ConvexError = getConvexErrorMessage(error as Error)
+            toast.error(ConvexError)
             console.error(error)
+        } finally {
+            setPending(false);
         }
     }
 
@@ -150,10 +156,9 @@ export const AddProjectModal = ({
                                             id="coverPhoto"
                                             ref={imageInput}
                                             onChange={handleImageChange}
-                                            disabled={selectedImage !== null}
+                                            disabled={selectedImage !== null || pending}
                                             className="hidden"
                                         />
-                                        {/* <p className="absolute text-xs top-[60px]">UPLOAD COVER PHOTO</p> */}
                                     </div>
                                 )}
                         </div>
@@ -169,7 +174,7 @@ export const AddProjectModal = ({
                                     <FormItem className="col-span-3">
                                         <FormLabel>Project Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Project Name" {...field} />
+                                            <Input placeholder="Enter Project Name" {...field} disabled={pending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -182,7 +187,7 @@ export const AddProjectModal = ({
                                     <FormItem className="col-span-2">
                                         <FormLabel>Tag Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Tag Name" {...field} />
+                                            <Input placeholder="Enter Tag Name" {...field} disabled={pending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -198,7 +203,7 @@ export const AddProjectModal = ({
                                     <FormItem>
                                         <FormLabel>Project Location</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Project Location" {...field} />
+                                            <Input placeholder="Enter Project Location" {...field} disabled={pending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -213,6 +218,7 @@ export const AddProjectModal = ({
                                 variant="outline"
                                 type="button"
                                 onClick={() => onOpen(false)}
+                                disabled={pending}
                             >
                                 Cancel
                             </Button>
@@ -220,8 +226,9 @@ export const AddProjectModal = ({
                             <Button
                                 type="submit"
                                 className="bg-dark"
+                                disabled={pending}
                             >
-                                Add
+                                {pending ? "Adding..." : "Add"}
                             </Button>
                         </div>
                     </form>

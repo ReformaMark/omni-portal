@@ -24,6 +24,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "../../../../../convex/_generated/api";
 import { toast } from "sonner";
+import { getConvexErrorMessage } from "@/lib/utils";
 
 const formSchema = z.object({
     realtyName: z.string().min(1, "Realty name is required."),
@@ -46,6 +47,7 @@ export const AddRealtyModal = ({
 
     const [selectedImage, setSelectedImage] = useState<File | null>(null)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
+    const [isPending, setIsPending] = useState(false);
     const imageInput = useRef<HTMLInputElement>(null)
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +63,7 @@ export const AddRealtyModal = ({
     }
 
     const handleAddProject = async (values: z.infer<typeof formSchema>) => {
+        setIsPending(true);
         try {
             const postUrl = await generateUploadUrl()
 
@@ -87,8 +90,11 @@ export const AddRealtyModal = ({
 
             onOpen(false)
         } catch (error) {
-            toast.error("Failed to add project")
+            const ConvexError = getConvexErrorMessage(error as Error)
+            toast.error(ConvexError)
             console.error(error)
+        } finally {
+            setIsPending(false);
         }
     }
 
@@ -232,6 +238,7 @@ export const AddRealtyModal = ({
                                 variant="outline"
                                 type="button"
                                 onClick={() => onOpen(false)}
+                                disabled={isPending}
                             >
                                 Cancel
                             </Button>
@@ -239,8 +246,9 @@ export const AddRealtyModal = ({
                             <Button
                                 type="submit"
                                 className="bg-dark"
+                                disabled={isPending}
                             >
-                                Add
+                                {isPending ? "Adding..." : "Add"}
                             </Button>
                         </div>
                     </form>
