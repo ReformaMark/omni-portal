@@ -20,8 +20,16 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { MapPin, Pencil, Phone, UserIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import z from "zod"
-import { UsersDummyType } from "../../../../../data/dummy-users"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { User } from "../../../../../data/dummy-users"
+import { useMutation } from "@tanstack/react-query";
+import { useConvexMutation } from "@convex-dev/react-query"
+import { api } from "../../../../../convex/_generated/api"
+import { getConvexErrorMessage } from "@/lib/utils"
+import { toast } from "sonner"
+import { useEffect, useState } from "react"
+import { useQuery } from "convex/react"
+import { Id } from "../../../../../convex/_generated/dataModel"
 
 const formSchema = z.object({
     fname: z.string().min(1, "First name is required"),
@@ -35,7 +43,7 @@ const formSchema = z.object({
 })
 
 interface EditAdminModalProps {
-    data: UsersDummyType;
+    data: User;
     open: boolean;
     onClose: () => void;
 }
@@ -45,6 +53,15 @@ export const EditAdminModal = ({
     onClose,
     open,
 }: EditAdminModalProps) => {
+    const [selectedRealtyId, setSelectedRealtyId] = useState<string>(data.realtyId!);
+    const { mutate: updateAdmin, isPending } = useMutation({
+        mutationFn: useConvexMutation(api.users.updateAdmin)
+    });
+    const currentRealty = useQuery(api.realty.getById, {
+        id: data.realtyId ?? undefined
+    });
+    const realties = useQuery(api.realty.getWithoutImage);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -59,14 +76,27 @@ export const EditAdminModal = ({
         }
     })
 
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+        if (!selectedRealtyId) {
+            toast.error("Please select a realty");
+            return;
+        }
 
-        // TODO: WHEN SUCCESS SEND API BACKEND THEN PROCEED TO FORM.RESET
-        console.log(values)
+        try {
+            await updateAdmin({
+                id: data._id,
+                realtyId: selectedRealtyId as Id<"realty">,
+                ...values,
+            });
 
-        form.reset()
-        // toast?? can also add delay when submitting for decent animation
-        onClose()
+            toast.success("Admin updated successfully");
+            form.reset();
+            onClose();
+        } catch (error) {
+            const convexError = getConvexErrorMessage(error as Error);
+            toast.error(convexError || "Failed to update admin");
+            console.error("Error updating admin:", error);
+        }
     }
 
     return (
@@ -85,14 +115,25 @@ export const EditAdminModal = ({
                         </div>
 
                         <div>
-                            <Select>
+                            <Select
+                                defaultValue={data.realtyId}
+                                onValueChange={(value) => setSelectedRealtyId(value)}
+                            >
                                 <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Realty" className="text-muted-foreground" />
+                                    <SelectValue
+                                        placeholder="Realty"
+                                        defaultValue={currentRealty?.realtyName}
+                                    />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="zonal">ZONAL</SelectItem>
-                                    <SelectItem value="hrm">HRM</SelectItem>
-                                    <SelectItem value="orpc">ORPC</SelectItem>
+                                    {realties?.map((realty) => (
+                                        <SelectItem
+                                            key={realty._id}
+                                            value={realty._id}
+                                        >
+                                            {realty.realtyName}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
 
@@ -124,7 +165,7 @@ export const EditAdminModal = ({
                                     <FormItem>
                                         <FormLabel>First Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter First Name" {...field} />
+                                            <Input placeholder="Enter First Name" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -137,7 +178,7 @@ export const EditAdminModal = ({
                                     <FormItem>
                                         <FormLabel>Surname</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Surname" {...field} />
+                                            <Input placeholder="Enter Surname" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -161,7 +202,7 @@ export const EditAdminModal = ({
                                     <FormItem>
                                         <FormLabel>Email Address</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Email Address" {...field} type="email" />
+                                            <Input placeholder="Enter Email Address" {...field} type="email" disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -174,7 +215,7 @@ export const EditAdminModal = ({
                                     <FormItem>
                                         <FormLabel>Contact Number</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Contact Number" {...field} />
+                                            <Input placeholder="Enter Contact Number" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -198,7 +239,7 @@ export const EditAdminModal = ({
                                     <FormItem>
                                         <FormLabel>House / Unit #</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter House/Unit #" {...field} />
+                                            <Input placeholder="Enter House/Unit #" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -211,7 +252,7 @@ export const EditAdminModal = ({
                                     <FormItem>
                                         <FormLabel>Street</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Street" {...field} />
+                                            <Input placeholder="Enter Street" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -229,7 +270,7 @@ export const EditAdminModal = ({
                                     <FormItem>
                                         <FormLabel>Barangay</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Barangay" {...field} />
+                                            <Input placeholder="Enter Barangay" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -242,7 +283,7 @@ export const EditAdminModal = ({
                                     <FormItem>
                                         <FormLabel>City</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter City" {...field} />
+                                            <Input placeholder="Enter City" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -257,6 +298,7 @@ export const EditAdminModal = ({
                                 variant="outline"
                                 type="button"
                                 onClick={onClose}
+                                disabled={isPending}
                             >
                                 Cancel
                             </Button>
@@ -264,6 +306,7 @@ export const EditAdminModal = ({
                             <Button
                                 type="submit"
                                 className="bg-dark"
+                                disabled={isPending}
                             >
                                 Save Changes
                             </Button>

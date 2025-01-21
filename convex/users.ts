@@ -177,3 +177,79 @@ export const get = query({
             .collect()
     }
 })
+
+export const updateAdmin = mutation({
+    args: {
+        id: v.id("users"),
+        fname: v.string(),
+        lname: v.string(),
+        email: v.string(),
+        contact: v.string(),
+        houseNumber: v.string(),
+        street: v.string(),
+        barangay: v.string(),
+        city: v.string(),
+        realtyId: v.optional(v.id("realty")),
+    },
+    handler: async (ctx, args) => {
+        const adminId = await getAuthUserId(ctx);
+        if (!adminId) throw new ConvexError("Not authenticated");
+
+        const admin = await ctx.db.get(adminId);
+        if (!admin || admin.role !== "admin") {
+            throw new ConvexError("Unauthorized - Only admins can update users");
+        }
+
+        const { id, ...updates } = args;
+        const existingAdmin = await ctx.db.get(id);
+
+        if (!existingAdmin) {
+            throw new ConvexError("Admin not found");
+        }
+
+        if (existingAdmin.role !== "admin") {
+            throw new ConvexError("Can only update admin users");
+        }
+
+        await ctx.db.patch(id, updates);
+        return await ctx.db.get(id);
+    },
+});
+
+export const updateSeller = mutation({
+    args: {
+        id: v.id("users"),
+        fname: v.string(),
+        lname: v.string(),
+        email: v.string(),
+        contact: v.string(),
+        houseNumber: v.string(),
+        street: v.string(),
+        barangay: v.string(),
+        city: v.string(),
+        realtyId: v.optional(v.id("realty")),
+    },
+    handler: async (ctx, args) => {
+        const adminId = await getAuthUserId(ctx);
+        if (!adminId) throw new ConvexError("Not authenticated");
+
+        const admin = await ctx.db.get(adminId);
+        if (!admin || admin.role !== "admin") {
+            throw new ConvexError("Unauthorized - Only admins can update users");
+        }
+
+        const { id, ...updates } = args;
+        const existingSeller = await ctx.db.get(id);
+
+        if (!existingSeller) {
+            throw new ConvexError("Seller not found");
+        }
+
+        if (existingSeller.role !== "seller") {
+            throw new ConvexError("Can only update admin users");
+        }
+
+        await ctx.db.patch(id, updates);
+        return await ctx.db.get(id);
+    },
+});

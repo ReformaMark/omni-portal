@@ -15,7 +15,7 @@ import { TriangleAlertIcon } from "lucide-react"
 import { useState } from "react"
 import { AuthFlow } from "./auth-screen"
 import { useAuthActions } from "@convex-dev/auth/react"
-import { generateAccountId } from "@/lib/utils"
+import { generateBuyerId } from "@/lib/utils"
 
 export const SignUpCard = ({
     setState
@@ -38,7 +38,7 @@ export const SignUpCard = ({
     const [pending, setPending] = useState<boolean>(false);
     const [error, setError] = useState("");
 
-    const accountId = generateAccountId();
+    const accountId = generateBuyerId();
 
     // const router = useRouter()
 

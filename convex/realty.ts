@@ -162,3 +162,11 @@ export const getWithoutImage = query({
             .collect()
     }
 })
+
+export const getById = query({
+    args: { id: v.optional(v.id("realty")) },
+    handler: async (ctx, args) => {
+        if (!args.id) return null;
+        return await ctx.db.get(args.id);
+    }
+});
