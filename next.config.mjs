@@ -5,7 +5,11 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'neat-ox-277.convex.cloud',
-            }
+            },
+            {
+                protocol: 'https',
+                hostname: 'hidden-puffin-695.convex.cloud',
+            },
         ]
     }
 };
