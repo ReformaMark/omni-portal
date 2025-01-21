@@ -153,3 +153,12 @@ export const remove = mutation({
         await ctx.db.delete(args.id);
     }
 })
+
+export const getWithoutImage = query({
+    args: {},
+    handler: async (ctx) => {
+        return await ctx.db
+            .query("realty")
+            .collect()
+    }
+})

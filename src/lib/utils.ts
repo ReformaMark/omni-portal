@@ -9,8 +9,20 @@ export function formatPrice(value: number | string): string {
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-export function generateAccountId(): string {
+export function generateBuyerId(): string {
   const prefix = "B-";
+  const randomNumber = Math.floor(100000 + Math.random() * 900000);
+  return `${prefix}${randomNumber}`;
+}
+
+export function generateSellerId(): string {
+  const prefix = "S-";
+  const randomNumber = Math.floor(100000 + Math.random() * 900000);
+  return `${prefix}${randomNumber}`;
+}
+
+export function generateAdminId(): string {
+  const prefix = "A-";
   const randomNumber = Math.floor(100000 + Math.random() * 900000);
   return `${prefix}${randomNumber}`;
 }

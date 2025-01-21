@@ -2,11 +2,13 @@
 
 import { DataTable } from "@/components/data-table"
 import { ColumnDef } from "@tanstack/react-table"
-import { userDummy, UsersDummyType } from "../../../../../data/dummy-users"
 import { Button } from "@/components/ui/button"
 import { Eye, Mail, Pencil, Trash2, Trash2Icon } from "lucide-react"
+import { User } from "../../../../../data/dummy-users"
+import { useQuery } from "convex/react"
+import { api } from "../../../../../convex/_generated/api"
 
-export const AccountColumn: ColumnDef<UsersDummyType>[] = [
+export const AccountColumn: ColumnDef<User>[] = [
     {
         accessorKey: "accountId",
         header: () => <div className="text-center">Account ID</div>,
@@ -132,10 +134,12 @@ export const AccountColumn: ColumnDef<UsersDummyType>[] = [
 ]
 
 export const AccountList = () => {
+    const buyer = useQuery(api.users.get, { role: "buyer" })
+
     return (
         <div className="container mx-auto py-10 px-[50px] relative">
             <DataTable
-                data={userDummy}
+                data={buyer ?? []}
                 columns={AccountColumn}
                 search="fname"
                 placeholder="Search an account"

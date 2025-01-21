@@ -21,6 +21,14 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { MapPin, Phone, UserIcon, UserPlus } from "lucide-react"
 import { useForm } from "react-hook-form"
 import z from "zod"
+import { useMutation } from "@tanstack/react-query";
+import { useConvexMutation } from "@convex-dev/react-query"
+import { api } from "../../../../../convex/_generated/api"
+import { getConvexErrorMessage } from "@/lib/utils"
+import { toast } from "sonner"
+import { useQuery } from "convex/react"
+import { useState } from "react"
+import { Id } from "../../../../../convex/_generated/dataModel"
 
 const formSchema = z.object({
     fname: z.string().min(1, "First name is required"),
@@ -42,6 +50,12 @@ export const AddSellersModal = ({
     onClose,
     open,
 }: AddSellersModalProps) => {
+    const [selectedRealtyId, setSelectedRealtyId] = useState<string>("");
+    const { mutate: createSeller, isPending } = useMutation({
+        mutationFn: useConvexMutation(api.users.createSeller)
+    })
+    const realties = useQuery(api.realty.getWithoutImage);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -56,14 +70,27 @@ export const AddSellersModal = ({
         }
     })
 
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+        if (!selectedRealtyId) {
+            toast.error("Please select a realty");
+            return;
+        }
 
-        // TODO: WHEN SUCCESS SEND API BACKEND THEN PROCEED TO FORM.RESET
-        console.log(values)
+        try {
 
-        form.reset()
-        // toast?? can also add delay when submitting for decent animation
-        onClose()
+            await createSeller({
+                ...values,
+                realtyId: selectedRealtyId as Id<"realty">,
+            })
+
+            toast.success("Seller created successfully");
+            form.reset();
+            onClose();
+        } catch (error) {
+            const ConvexError = getConvexErrorMessage(error as Error);
+            toast.error(ConvexError || "Something went wrong");
+            console.error("Error creating admin:", error);
+        }
     }
 
     return (
@@ -82,14 +109,16 @@ export const AddSellersModal = ({
                         </div>
 
                         <div>
-                            <Select>
+                            <Select onValueChange={(value) => setSelectedRealtyId(value)}>
                                 <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="Realty" className="text-muted-foreground" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="zonal">ZONAL</SelectItem>
-                                    <SelectItem value="hrm">HRM</SelectItem>
-                                    <SelectItem value="orpc">ORPC</SelectItem>
+                                    {realties?.map((realty) => (
+                                        <SelectItem key={realty._id} value={realty._id}>
+                                            {realty.realtyName}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
 
@@ -121,7 +150,7 @@ export const AddSellersModal = ({
                                     <FormItem>
                                         <FormLabel>First Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter First Name" {...field} />
+                                            <Input placeholder="Enter First Name" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -134,7 +163,7 @@ export const AddSellersModal = ({
                                     <FormItem>
                                         <FormLabel>Surname</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Surname" {...field} />
+                                            <Input placeholder="Enter Surname" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -158,7 +187,7 @@ export const AddSellersModal = ({
                                     <FormItem>
                                         <FormLabel>Email Address</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Email Address" {...field} type="email" />
+                                            <Input placeholder="Enter Email Address" {...field} type="email" disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -171,7 +200,7 @@ export const AddSellersModal = ({
                                     <FormItem>
                                         <FormLabel>Contact Number</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Contact Number" {...field} />
+                                            <Input placeholder="Enter Contact Number" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -195,7 +224,7 @@ export const AddSellersModal = ({
                                     <FormItem>
                                         <FormLabel>House / Unit #</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter House/Unit #" {...field} />
+                                            <Input placeholder="Enter House/Unit #" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -208,7 +237,7 @@ export const AddSellersModal = ({
                                     <FormItem>
                                         <FormLabel>Street</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Street" {...field} />
+                                            <Input placeholder="Enter Street" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -226,7 +255,7 @@ export const AddSellersModal = ({
                                     <FormItem>
                                         <FormLabel>Barangay</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Barangay" {...field} />
+                                            <Input placeholder="Enter Barangay" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -239,7 +268,7 @@ export const AddSellersModal = ({
                                     <FormItem>
                                         <FormLabel>City</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter City" {...field} />
+                                            <Input placeholder="Enter City" {...field} disabled={isPending} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -254,6 +283,7 @@ export const AddSellersModal = ({
                                 variant="outline"
                                 type="button"
                                 onClick={onClose}
+                                disabled={isPending}
                             >
                                 Cancel
                             </Button>
@@ -261,8 +291,9 @@ export const AddSellersModal = ({
                             <Button
                                 type="submit"
                                 className="bg-dark"
+                                disabled={isPending}
                             >
-                                Save Changes
+                                {isPending ? "Adding..." : "Save Changes"}
                             </Button>
                         </div>
                     </form>

@@ -3,13 +3,15 @@
 import { DataTable } from "@/components/data-table"
 import { Button } from "@/components/ui/button"
 import { ColumnDef } from "@tanstack/react-table"
+import { useQuery } from "convex/react"
 import { Eye, Mail, Pencil, PlusIcon, Trash2, Trash2Icon } from "lucide-react"
 import { useState } from "react"
-import { adminDummy, UsersDummyType } from "../../../../../data/dummy-users"
-import { EditAdminModal } from "./edit-admin-modal"
+import { api } from "../../../../../convex/_generated/api"
 import { AddAdminModal } from "./add-admin-modal"
+import { EditAdminModal } from "./edit-admin-modal"
+import { User } from "../../../../../data/dummy-users"
 
-export const AccountColumn: ColumnDef<UsersDummyType>[] = [
+export const AccountColumn: ColumnDef<User>[] = [
     {
         accessorKey: "accountId",
         header: () => <div className="text-center">Account ID</div>,
@@ -102,7 +104,7 @@ export const AccountColumn: ColumnDef<UsersDummyType>[] = [
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 p-0"
-                            onClick={() => { }}
+                            onClick={() => setShowEditModal(true)}
                         >
                             <Pencil className="h-8 w-8" />
                         </Button>
@@ -111,7 +113,7 @@ export const AccountColumn: ColumnDef<UsersDummyType>[] = [
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 p-0"
-                            onClick={() => setShowEditModal(true)}
+                            onClick={() => { }}
                         >
                             <Eye className="h-8 w-8" />
                         </Button>
@@ -148,12 +150,13 @@ export const AccountColumn: ColumnDef<UsersDummyType>[] = [
 
 export const AdminList = () => {
     const [showAddAdminModal, setShowAddAdminModal] = useState(false)
+    const admins = useQuery(api.users.get, { role: "admin" })
 
     return (
         <>
             <div className="container mx-auto py-10 px-[50px] relative">
                 <DataTable
-                    data={adminDummy}
+                    data={admins ?? []}
                     columns={AccountColumn}
                     search="fname"
                     placeholder="Search an account"

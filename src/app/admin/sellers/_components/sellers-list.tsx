@@ -4,12 +4,14 @@ import { DataTable } from "@/components/data-table"
 import { Button } from "@/components/ui/button"
 import { ColumnDef } from "@tanstack/react-table"
 import { Eye, Mail, Pencil, PlusIcon, Trash2, Trash2Icon } from "lucide-react"
-import { sellersDummy, UsersDummyType } from "../../../../../data/dummy-users"
 import { useState } from "react"
 import { EditSellerModal } from "./edit-sellers-modal"
 import { AddSellersModal } from "./add-sellers-modal"
+import { User } from "../../../../../data/dummy-users"
+import { useQuery } from "convex/react"
+import { api } from "../../../../../convex/_generated/api"
 
-export const AccountColumn: ColumnDef<UsersDummyType>[] = [
+export const AccountColumn: ColumnDef<User>[] = [
     {
         accessorKey: "accountId",
         header: () => <div className="text-center">Account ID</div>,
@@ -102,7 +104,7 @@ export const AccountColumn: ColumnDef<UsersDummyType>[] = [
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 p-0"
-                            onClick={() => { }}
+                            onClick={() => setShowEditModal(true)}
                         >
                             <Pencil className="h-8 w-8" />
                         </Button>
@@ -111,7 +113,7 @@ export const AccountColumn: ColumnDef<UsersDummyType>[] = [
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 p-0"
-                            onClick={() => setShowEditModal(true)}
+                            onClick={() => { }}
                         >
                             <Eye className="h-8 w-8" />
                         </Button>
@@ -148,12 +150,13 @@ export const AccountColumn: ColumnDef<UsersDummyType>[] = [
 
 export const SellersList = () => {
     const [showAddSellerModal, setShowAddSellerModal] = useState(false)
+    const sellers = useQuery(api.users.get, { role: "seller" })
 
     return (
         <>
             <div className="container mx-auto py-10 px-[50px] relative">
                 <DataTable
-                    data={sellersDummy}
+                    data={sellers ?? []}
                     columns={AccountColumn}
                     search="fname"
                     placeholder="Search an account"
