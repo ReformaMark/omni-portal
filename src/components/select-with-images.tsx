@@ -6,6 +6,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import { useEffect } from "react";
+import { useProjectStore } from "@/store/project-store";
 
 interface SelectWithImagesProps {
     onProjectSelect: (projectId: Id<"project"> | null) => void;
@@ -16,13 +17,15 @@ export const SelectWithImages = ({
     onProjectSelect,
     defaultValue
 }: SelectWithImagesProps) => {
+    const setSelectedProjectId = useProjectStore(state => state.setSelectedProjectId)
     const projects = useQuery(api.projects.get);
 
     useEffect(() => {
         if (projects && projects.length > 0 && !defaultValue) {
-            onProjectSelect(projects[0]._id);
+            onProjectSelect(projects[0]._id)
+            setSelectedProjectId(projects[0]._id)
         }
-    }, [projects, defaultValue, onProjectSelect]);
+    }, [projects, defaultValue, onProjectSelect, setSelectedProjectId])
 
     if (!projects) {
         return <div>Loading...</div>;

@@ -15,6 +15,8 @@ import { usePathname } from "next/navigation"
 import HomeAvatar from "./home-avatar"
 import { sidebarItems } from './sidebar'
 import { UserDropdown } from "./user-dropdown"
+import { useProjectStore } from "@/store/project-store"
+import { SelectWithImages } from "./select-with-images"
 
 
 interface NavItem {
@@ -52,6 +54,7 @@ const accountItems: NavItem[] = [
 export function Header() {
     const { user } = useCurrentUser()
     const pathname = usePathname()
+    const setSelectedProjectId = useProjectStore(state => state.setSelectedProjectId)
 
     const fullname = user?.fname + " " + user?.lname
 
@@ -112,11 +115,14 @@ export function Header() {
                 </div>
 
                 <div className="ml-auto items-center gap-4 mr-12 hidden lg:flex">
-                    {/* {(pathname === "/admin/inventory" || pathname === "/admin/other-properties" || pathname === "/admin/deals") && (
-                        <SelectWithImages
-                            onProjectSelect={() => {}}
-                        />
-                    )} */}
+                    {
+                        (pathname === "/admin/inventory" ||
+                            pathname === "/admin/other-properties" ||
+                            pathname === "/admin/deals") && (
+                            <SelectWithImages
+                                onProjectSelect={setSelectedProjectId}
+                            />
+                        )}
                     <Button variant="semiGhost" size="icon">
                         <DownloadIcon className="h-5" />
                         <span className="sr-only">User account</span>

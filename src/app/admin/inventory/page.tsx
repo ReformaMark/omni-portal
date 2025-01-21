@@ -11,9 +11,10 @@ import { InventoryActions } from "../_components/inventory-actions";
 import { InventoryCard } from "../_components/inventory-card";
 import { inventoryColumns } from "../_components/inventory-columns";
 import { PropertyType } from "../../../../data/dummy";
+import { useProjectStore } from "@/store/project-store";
 
 const InventoryPage = () => {
-    const [selectedProjectId, setSelectedProjectId] = useState<Id<"project"> | null>(null);
+    const selectedProjectId = useProjectStore(state => state.selectedProjectId)
     const [selectedRows, setSelectedRows] = useState<Id<"property">[]>([]);
 
     const handleRowSelection = useCallback((rows: PropertyType[]) => {
@@ -28,7 +29,7 @@ const InventoryPage = () => {
 
     const properties = useQuery(api.property.get, {
         projectId: selectedProjectId ?? undefined
-    });
+    })
 
     const availableProperties = properties?.filter(property => property.status === "available");
 
@@ -42,7 +43,7 @@ const InventoryPage = () => {
         <section
             className="flex flex-col justify-start items-center pt-8 min-h-screen h-full"
         >
-            <SelectWithImages onProjectSelect={setSelectedProjectId} />
+            {/* <SelectWithImages onProjectSelect={setSelectedProjectId} /> */}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 w-full px-[50px]">
                 <InventoryCard
