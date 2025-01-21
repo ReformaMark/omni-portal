@@ -4,6 +4,7 @@ import { convexAuth } from "@convex-dev/auth/server";
 const CustomPassword = Password({
   profile(params) {
     return {
+      accountId: params.accountId as string,
       email: params.email as string,
       fname: params.fname as string,
       lname: params.email as string,
@@ -12,6 +13,7 @@ const CustomPassword = Password({
       street: params.street as string,
       barangay: params.barangay as string,
       city: params.city as string,
+      role: params.role as "admin" | "buyer" | "seller",
     }
   }
 })

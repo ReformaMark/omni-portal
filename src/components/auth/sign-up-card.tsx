@@ -14,28 +14,63 @@ import { TriangleAlertIcon } from "lucide-react"
 // import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { AuthFlow } from "./auth-screen"
+import { useAuthActions } from "@convex-dev/auth/react"
+import { generateAccountId } from "@/lib/utils"
 
 export const SignUpCard = ({
     setState
 }: {
     setState: (state: AuthFlow) => void
 }) => {
+    const { signIn } = useAuthActions()
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [fname, setFname] = useState("");
+    const [lname, setLname] = useState("");
+    const [contact, setContact] = useState("");
+    const [houseNumber, setHouseNumber] = useState("");
+    const [street, setStreet] = useState("");
+    const [barangay, setBarangay] = useState("");
+    const [city, setCity] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const [pending, setPending] = useState<boolean>(false);
     const [error, setError] = useState("");
 
+    const accountId = generateAccountId();
+
     // const router = useRouter()
 
-    const onSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+    const onSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
         setPending(true)
-
         setError("")
+
+        try {
+
+            await signIn("password", {
+                accountId,
+                email,
+                password,
+                fname,
+                lname,
+                contact,
+                houseNumber,
+                street,
+                barangay,
+                city,
+                role: "buyer",
+                flow: "signUp",
+            })
+
+        } catch (error) {
+            setError("Something went wrong. Please try again.")
+            console.error(error)
+        } finally {
+            setPending(false)
+        }
     }
 
     return (
@@ -78,6 +113,62 @@ export const SignUpCard = ({
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Confirm Password"
                         type="password"
+                        required
+                    />
+                    <Input
+                        disabled={pending}
+                        value={fname}
+                        onChange={(e) => setFname(e.target.value)}
+                        placeholder="First Name"
+                        type="text"
+                        required
+                    />
+                    <Input
+                        disabled={pending}
+                        value={lname}
+                        onChange={(e) => setLname(e.target.value)}
+                        placeholder="Last Name"
+                        type="text"
+                        required
+                    />
+                    <Input
+                        disabled={pending}
+                        value={contact}
+                        onChange={(e) => setContact(e.target.value)}
+                        placeholder="Contact Number"
+                        type="text"
+                        required
+                    />
+                    <Input
+                        disabled={pending}
+                        value={houseNumber}
+                        onChange={(e) => setHouseNumber(e.target.value)}
+                        placeholder="House Number"
+                        type="text"
+                        required
+                    />
+                    <Input
+                        disabled={pending}
+                        value={street}
+                        onChange={(e) => setStreet(e.target.value)}
+                        placeholder="Street"
+                        type="text"
+                        required
+                    />
+                    <Input
+                        disabled={pending}
+                        value={barangay}
+                        onChange={(e) => setBarangay(e.target.value)}
+                        placeholder="Barangay"
+                        type="text"
+                        required
+                    />
+                    <Input
+                        disabled={pending}
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="City"
+                        type="text"
                         required
                     />
                     <Button
