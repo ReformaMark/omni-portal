@@ -7,7 +7,7 @@ const CustomPassword = Password({
       accountId: params.accountId as string,
       email: params.email as string,
       fname: params.fname as string,
-      lname: params.email as string,
+      lname: params.lname as string,
       contact: params.contact as string,
       houseNumber: params.houseNumber as string,
       street: params.street as string,
