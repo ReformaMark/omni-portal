@@ -65,5 +65,34 @@ export default defineSchema({
         searchField: "projectId",
     }).searchIndex("by_status", {
         searchField: "status",
-    })
+    }),
+    deal: defineTable({
+        propertyId: v.id("property"),
+        buyerId: v.id("user"),
+        sellerId: v.id("user"),
+        dealPrice: v.number(),
+        downPayment: v.number(),
+        monthlyAmortization: v.number(),
+        term: v.number(),
+        status: v.union(
+            v.literal("pending"),
+            v.literal("approved"),
+            v.literal("rejected"),
+            v.literal("closed"),
+        ),
+        createdAt: v.number(),
+        updatedAt: v.number(),
+    }).searchIndex("by_property", {
+        searchField: "propertyId",
+    }).searchIndex("by_status", {
+        searchField: "status",
+    }),
+    document: defineTable({
+        dealId: v.id("deal"),
+        documentType: v.string(),
+        file: v.string(),
+    }).searchIndex("by_deal", {
+        searchField: "dealId",
+    }),
+
 })

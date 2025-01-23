@@ -45,7 +45,7 @@ export const PropertyCard = ({
                     {realty}
                 </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-2">
                 <div className="flex justify-end text-sm px-3">
                     <span className="text-muted-foreground">Date Added:</span>12/26/2024
                 </div>

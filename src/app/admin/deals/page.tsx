@@ -95,7 +95,7 @@ const DealsPage = () => {
     }
 
     return (
-        <div className="flex flex-1 overflow-hidden items-center justify-center mt-[100px]">
+        <div className="flex flex-1 overflow-hidden items-center justify-center mt-[40px]">
             <div className="h-full overflow-x-auto">
                 <div className="flex gap-6 p-6 min-w-max">
                     {properties.map((property) => (
