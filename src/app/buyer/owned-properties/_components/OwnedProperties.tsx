@@ -136,8 +136,8 @@ function OwnedProperties() {
                         <div className="grid grid-cols-2 gap-x-1 items-center lg:gap-x-3  px-2 md:px-5 lg:px-10 ">
                             <div className="grid items-center h-full">
                                 <h3 className='text-xs text-[#4D4F51] font-extralight '>Amount Paid</h3>
-                                <h1 className='font-medium text-2xl text-black mt-2 mb-1'>&#8369;{formatPrice(deal.totalAmountPaid)}</h1>
-                                <p className='text-[0.6rem] text-[#888888]'>&#8369;{formatPrice(deal.remainingBalance)} still to be paid</p>
+                                <h1 className='font-medium text-2xl text-black mt-2 mb-1'>&#8369;{formatPrice(deal.downPayment.paid ?? 0)}</h1>
+                                <p className='text-[0.6rem] text-[#888888]'>&#8369;{formatPrice( deal.downPayment.unPaid ?? 0)} still to be paid</p>
                             </div>
                         
                             <ChartContainer config={chartConfig} className="self-center relative mx-auto size-16 md:size-20 lg:size-24 ">

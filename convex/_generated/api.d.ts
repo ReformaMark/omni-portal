@@ -19,6 +19,7 @@ import type * as http from "../http.js";
 import type * as projects from "../projects.js";
 import type * as property from "../property.js";
 import type * as realty from "../realty.js";
+import type * as statementOfAccount from "../statementOfAccount.js";
 import type * as users from "../users.js";
 
 /**
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   projects: typeof projects;
   property: typeof property;
   realty: typeof realty;
+  statementOfAccount: typeof statementOfAccount;
   users: typeof users;
 }>;
 export declare const api: FilterApi<

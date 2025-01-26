@@ -17,6 +17,8 @@ import { adminSidebarItems } from './sidebar'
 import { UserDropdown } from "./user-dropdown"
 import { useProjectStore } from "@/store/project-store"
 import { SelectWithImages } from "./select-with-images"
+import { usePropertyStore } from "@/store/property-store"
+import { SelectProperTy } from "./select-property"
 
 
 interface NavItem {
@@ -67,6 +69,7 @@ export function Header() {
     const { user } = useCurrentUser()
     const pathname = usePathname()
     const setSelectedProjectId = useProjectStore(state => state.setSelectedProjectId)
+    const setSelectedPropertyId = usePropertyStore(state => state.setSelectedPropertyId)
 
     const fullname = user?.fname + " " + user?.lname
 
@@ -159,12 +162,18 @@ export function Header() {
                             pathname === "/admin/other-properties" ||
                             pathname === "/admin/deals" ||
                             pathname === "/buyer/owned-properties" ||
-                            pathname === "/buyer/active-advertisements"
+                            pathname === "/buyer/active-advertisements" ||
+                            pathname === "/buyer/soa"
                         ) && (
                             <SelectWithImages
                                 onProjectSelect={setSelectedProjectId}
                             />
-                        )}
+                    )}
+                    { ( pathname === "/buyer/soa" && (
+                        <SelectProperTy
+                            onPropertySelect={setSelectedPropertyId}
+                        />
+                    ))}
                     <Button variant="semiGhost" size="icon">
                         <DownloadIcon className="h-5" />
                         <span className="sr-only">User account</span>

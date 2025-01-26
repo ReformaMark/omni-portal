@@ -1,6 +1,7 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { asyncMap } from "convex-helpers";
 
 export const get = query({
     args: {
@@ -15,6 +16,34 @@ export const get = query({
 
         const properties = await query.collect();
         return properties;
+    }
+});
+
+export const getUserProperty = query({
+    args: {
+        projectId: v.optional(v.id("project"))
+    },
+    handler: async (ctx, args) => {
+        const userId = await getAuthUserId(ctx)
+        if(!userId) throw new ConvexError('No userId found.')
+
+        const deals = await ctx.db.query('deal').withIndex("by_buyerId", (q)=> q.eq("buyerId", userId)).collect()
+
+        let properties = await asyncMap(deals, async(d)=>{
+            const property = await ctx.db.get(d.propertyId)
+
+            return property
+        })
+
+        const filteredProperties = properties.filter((property) => property !== null)
+   
+        if (args.projectId) {
+            const prjectProperty = filteredProperties.filter((property) => property.projectId === args.projectId);
+            console.log(prjectProperty)
+            return prjectProperty;
+        }
+
+        return filteredProperties;
     }
 });
 
@@ -195,3 +224,4 @@ export const getStats = query({
         };
     }
 })
+

@@ -61,3 +61,17 @@ export function getConvexErrorMessage(error: Error): string {
     return "Something went wrong";
   }
 }
+
+export function formatDate(convexDate: number) {
+  const roundedTimestamp = Math.floor(convexDate);
+
+  const readableDate = new Date(roundedTimestamp);
+
+  // Extract month, day, and year
+  const month = readableDate.getMonth() + 1; // Months are 0-based, so add 1
+  const day = readableDate.getDate();
+  const year = readableDate.getFullYear();
+
+  // Format as M/D/YYYY
+  return `${month}/${day}/${year}`;
+}

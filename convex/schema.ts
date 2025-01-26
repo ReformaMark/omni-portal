@@ -87,15 +87,19 @@ export default defineSchema({
         searchField: "propertyId",
     }).searchIndex("by_status", {
         searchField: "status",
-    }),
+    }).index("by_buyerId", ['buyerId']),
 
-    monthlyPayment: defineTable({
+    
+    statementOfAccount: defineTable({
         dealId: v.id('deal'),
+        particulars: v.string(),
         paymentMethod: v.optional(v.string()),
         totalAmountPaid: v.number(),
         remainingBalance: v.number(),
         remainingTerms: v.number(),
     }).index("by_dealId", ['dealId']),
+
+
 
     document: defineTable({
         dealId: v.id("deal"),
