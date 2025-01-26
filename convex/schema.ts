@@ -68,11 +68,12 @@ export default defineSchema({
     }),
     deal: defineTable({
         propertyId: v.id("property"),
-        buyerId: v.id("user"),
-        sellerId: v.id("user"),
+        buyerId: v.id("users"),
+        sellerId: v.id("users"),
         dealPrice: v.number(),
         downPayment: v.number(),
         monthlyAmortization: v.number(),
+        monthsPaid: v.optional(v.number()),
         term: v.number(),
         status: v.union(
             v.literal("pending"),
@@ -87,6 +88,15 @@ export default defineSchema({
     }).searchIndex("by_status", {
         searchField: "status",
     }),
+
+    monthlyPayment: defineTable({
+        dealId: v.id('deal'),
+        paymentMethod: v.optional(v.string()),
+        totalAmountPaid: v.number(),
+        remainingBalance: v.number(),
+        remainingTerms: v.number(),
+    }).index("by_dealId", ['dealId']),
+
     document: defineTable({
         dealId: v.id("deal"),
         documentType: v.string(),

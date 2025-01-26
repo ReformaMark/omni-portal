@@ -13,7 +13,7 @@ import { Bell, DownloadIcon, Loader2Icon, MenuIcon } from 'lucide-react'
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import HomeAvatar from "./home-avatar"
-import { sidebarItems } from './sidebar'
+import { adminSidebarItems } from './sidebar'
 import { UserDropdown } from "./user-dropdown"
 import { useProjectStore } from "@/store/project-store"
 import { SelectWithImages } from "./select-with-images"
@@ -51,6 +51,18 @@ const accountItems: NavItem[] = [
     },
 ]
 
+const buyerCategoryItems: NavItem[] = [
+    {
+        title: "Owned Properties",
+        href: "/buyer/owned-properties",
+    },
+    {
+        title: "Active Advertisements",
+        href: "/buyer/active-advertisements",
+    },
+]
+
+
 export function Header() {
     const { user } = useCurrentUser()
     const pathname = usePathname()
@@ -64,6 +76,11 @@ export function Header() {
     }))
 
     const updatedAccountItems = accountItems.map(item => ({
+        ...item,
+        isActive: pathname === item.href,
+    }))
+
+    const updatedBuyerCategoryItems = buyerCategoryItems.map(item => ({
         ...item,
         isActive: pathname === item.href,
     }))
@@ -112,13 +129,38 @@ export function Header() {
                             ))}
                         </nav>
                     )}
+
+                    {/* for buyers dashboard*/}
+                    {(pathname === "/buyer" || pathname === "/buyer/dashboard" || pathname === '/buyer/owned-properties' || pathname === "/buyer/active-advertisements") && (
+                        <nav className="hidden md:flex items-center gap-12 ml-[120px]">
+                            {updatedBuyerCategoryItems.map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={cn(
+                                        "text-sm font-medium transition-colors hover:text-primary relative py-4",
+                                        item.isActive ? "text-dark" : "text-muted-foreground"
+                                    )}
+                                >
+                                    {item.title}
+                                    {item.isActive && (
+                                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-dark" />
+                                    )}
+                                </Link>
+                            ))}
+                        </nav>
+                    )}
+
                 </div>
 
                 <div className="ml-auto items-center gap-4 mr-12 hidden lg:flex">
                     {
                         (pathname === "/admin/inventory" ||
                             pathname === "/admin/other-properties" ||
-                            pathname === "/admin/deals") && (
+                            pathname === "/admin/deals" ||
+                            pathname === "/buyer/owned-properties" ||
+                            pathname === "/buyer/active-advertisements"
+                        ) && (
                             <SelectWithImages
                                 onProjectSelect={setSelectedProjectId}
                             />
@@ -154,7 +196,7 @@ export function Header() {
                                 <section
                                     className='bg-[#FFFFFF]'
                                 >
-                                    {sidebarItems.map((item) => (
+                                    {adminSidebarItems.map((item) => (
                                         <Link
                                             key={item.href}
                                             href={item.href}

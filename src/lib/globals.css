@@ -29,7 +29,7 @@ body {
       --lightGray = #D9D9D9
     */
     --dark: 216, 92%, 14%; 
-    --darkGray: 210, 3%, 31%;
+    --darkGray: #4D4F51;
     --lightGray: 0, 0%, 85%;
     --gray: 0, 0%, 53%;
     --secondary: 240 4.8% 95.9%;

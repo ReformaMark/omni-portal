@@ -1,9 +1,10 @@
 "use client"
-import { Building2, Calculator, FileCheck, Files, FolderOpen, LayoutGrid, MessageCircle, Package, PiggyBank, Users } from 'lucide-react';
+import { Building2, Calculator, CreditCard, FileCheck, FilePenLine, Files, FolderOpen, LayoutGrid, MessageCircle, Package, PiggyBank, Users } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useCheckRole } from '@/hooks/use-check-role';
 
 interface SidebarItem {
     icon: React.ElementType;
@@ -11,7 +12,7 @@ interface SidebarItem {
     href: string;
 }
 
-export const sidebarItems: SidebarItem[] = [
+export const adminSidebarItems: SidebarItem[] = [
     {
         icon: LayoutGrid,
         label: "Dashboard",
@@ -64,21 +65,57 @@ export const sidebarItems: SidebarItem[] = [
     }
 ]
 
+export const buyerSidebarItems: SidebarItem[] = [
+    {
+        icon: LayoutGrid,
+        label: "Dashboard",
+        href: "/buyer",
+    },
+    {
+        icon: FilePenLine,
+        label: "SOA",
+        href: "/buyer/soa"
+    },
+    {
+        icon: CreditCard,
+        label: "Billing",
+        href: "/buyer/billing"
+    },
+    {
+        icon: Building2,
+        label: "Documents",
+        href: "/buyer/documents"
+    },
+    {
+        icon: MessageCircle,
+        label: "Chat Support",
+        href: "/buyer/support"
+    }
+]
+
+const sellerSideBarItems: SidebarItem[] = [
+    
+]
+
+
 export const AppSidebar = () => {
     const pathname = usePathname()
-
+    const {data} = useCheckRole()
+    const sideBarItems = data && data === 'admin' ? adminSidebarItems : data === 'buyer' ? buyerSidebarItems : sellerSideBarItems
+    const isDashboard = pathname === "/buyer/owned-properties" || pathname === "/buyer/active-advertisements"
     return (
         <>
             <section
                 className='border-r bg-[#FFFFFF] w-[263px] pt-[85px] px-5 hidden lg:block'
             >
-                {sidebarItems.map((item) => (
+                {sideBarItems?.map((item) => (
                     <Link
                         key={item.href}
                         href={item.href}
                         className={cn(
                             "w-full flex gap-2 justify-start hover:bg-gray-100 hover:rounded-[27px] py-3 px-4 cursor-pointer items-center",
-                            item.href === pathname && "bg-gray-100 text-dark font-bold text-[16px] rounded-[27px]"
+                            item.href === pathname && "bg-gray-100 text-dark font-bold text-[16px] rounded-[27px]",
+                            item.href === "/buyer" && isDashboard && "bg-gray-100 text-dark font-bold text-[16px] rounded-[27px]"
                         )}
                     >
                         <div className='flex items-center gap-2 ml-7'>
