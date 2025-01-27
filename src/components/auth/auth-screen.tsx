@@ -5,8 +5,47 @@ import { useState } from "react"
 import { SignInCard } from "./sign-in-card";
 import { SignUpCard } from "./sign-up-card";
 import { RoleCheck } from "./logged-in";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 export type AuthFlow = "signIn" | "signUp";
+
+const cardVariants = {
+    signIn: {
+        opacity: 1,
+        display: "flex",
+        transition: { duration: 0.3 }
+    },
+    signUp: {
+        opacity: 0,
+        display: "none",
+        transition: { duration: 0.3 }
+    }
+};
+
+const signUpCardVariants = {
+    signIn: {
+        opacity: 0,
+        display: "none",
+        transition: { duration: 0.3 }
+    },
+    signUp: {
+        opacity: 1,
+        display: "flex",
+        transition: { duration: 0.3 }
+    }
+};
+
+const imageVariants = {
+    signIn: {
+        x: "0%",
+        transition: { duration: 0.5, ease: "easeInOut" }
+    },
+    signUp: {
+        x: "-100%",
+        transition: { duration: 0.5, ease: "easeInOut" }
+    }
+};
 
 export const AuthScreen = () => {
     const [state, setState] = useState<AuthFlow>("signIn")
@@ -17,21 +56,47 @@ export const AuthScreen = () => {
     }
 
     return (
-        <div className="h-screen w-full lg:flex lg:flex-row">
-            <div className="hidden lg:w-[50%] bg-gradient-to-b from-primary to-primary/70 lg:flex lg:flex-col lg:justify-center lg:items-center text-white px-[76px]">
-                {/* <h1 className="text-3xl font-bold mb-4 text-center">Simplify your workflow with seamless electronic records management!</h1> */}
-                <p className="text-lg font-medium">
-                    OMNI Portal
-                </p>
-            </div>
-
-            <div className="h-full w-full lg:w-[50%] flex flex-col flex-1 items-center justify-center bg-gradient-to-b from-primary to-primary/70">
-
-                <div className="h-full flex items-center justify-center ">
-                    <div className="md:h-auto md:w-[420px]">
-                        {state === "signIn" ? <SignInCard setState={setState} /> : <SignUpCard setState={setState} />}
+        <div className="h-screen w-full overflow-hidden relative">
+            <div className="flex flex-row h-full max-lg:items-center max-lg:justify-center">
+                {/* Sign In Card */}
+                <motion.div
+                    className="lg:w-1/2 flex items-center justify-center"
+                    animate={state}
+                    variants={cardVariants}
+                >
+                    <div className="w-full sm:w-[350px] md:w-[400px] lg:w-[420px]">
+                        <SignInCard setState={setState} />
                     </div>
-                </div>
+                </motion.div>
+
+                {/* Sliding Image */}
+                <motion.div
+                    className="hidden absolute w-1/2 h-full lg:flex items-center justify-center p-[20px]"
+                    style={{ right: "0%" }}
+                    animate={state}
+                    variants={imageVariants}
+                >
+                    <Image
+                        src="/auth-image.svg"
+                        alt="auth-image"
+                        width={500}
+                        height={500}
+                        className="w-full h-full object-cover rounded-[25px]"
+                        priority
+                    />
+                </motion.div>
+
+                {/* Sign Up Card */}
+                <motion.div
+                    className="lg:w-1/2 flex items-center justify-center lg:ml-auto"
+
+                    animate={state}
+                    variants={signUpCardVariants}
+                >
+                    <div className="w-full sm:w-[350px] md:w-[400px] lg:w-[420px]">
+                        <SignUpCard setState={setState} />
+                    </div>
+                </motion.div>
             </div>
         </div>
     )

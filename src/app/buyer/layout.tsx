@@ -1,3 +1,4 @@
+import { BuyerGuard } from "@/components/auth/buyer-guard"
 import { ConvexClientProvider } from "@/components/convex-client-provider"
 import { Header } from "@/components/headerTab"
 import { AppSidebar } from "@/components/sidebar"
@@ -32,6 +33,7 @@ export default function AdminLayout({
                     <body
                         className={`${poppinsFont.className} bg-[#F6F6F6]`}
                     >
+                        <BuyerGuard>
                             <SidebarProvider>
                                 <div className="flex min-h-screen flex-col antialiased w-full">
                                     <Header />
@@ -42,6 +44,7 @@ export default function AdminLayout({
                                     </div>
                                 </div>
                             </SidebarProvider>
+                        </BuyerGuard>
                     </body>
                 </html>
             </ConvexClientProvider>

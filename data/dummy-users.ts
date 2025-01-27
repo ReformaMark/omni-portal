@@ -10,10 +10,10 @@ export interface User {
     lname: string;
     email: string;
     contact: string;
-    houseNumber: string;
-    street: string;
-    barangay: string;
-    city: string;
+    houseNumber?: string | undefined;
+    street?: string | undefined;
+    barangay?: string | undefined;
+    city?: string | undefined;
     emailVerified?: string;
     image?: string;
     realtyId?: Id<"realty">;

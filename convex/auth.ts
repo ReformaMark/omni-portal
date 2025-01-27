@@ -9,10 +9,10 @@ const CustomPassword = Password({
       fname: params.fname as string,
       lname: params.lname as string,
       contact: params.contact as string,
-      houseNumber: params.houseNumber as string,
-      street: params.street as string,
-      barangay: params.barangay as string,
-      city: params.city as string,
+      // houseNumber: params.houseNumber as string,
+      // street: params.street as string,
+      // barangay: params.barangay as string,
+      // city: params.city as string,
       role: params.role as "admin" | "buyer" | "seller",
     }
   }

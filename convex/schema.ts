@@ -12,10 +12,10 @@ export default defineSchema({
         emailVerified: v.optional(v.string()),
         image: v.optional(v.string()),
         contact: v.string(),
-        houseNumber: v.string(),
-        street: v.string(),
-        barangay: v.string(),
-        city: v.string(),
+        houseNumber: v.optional(v.string()),
+        street: v.optional(v.string()),
+        barangay: v.optional(v.string()),
+        city: v.optional(v.string()),
         role: v.union(
             v.literal("admin"),
             v.literal("buyer"),
@@ -89,7 +89,7 @@ export default defineSchema({
         searchField: "status",
     }).index("by_buyerId", ['buyerId']),
 
-    
+
     statementOfAccount: defineTable({
         dealId: v.id('deal'),
         particulars: v.string(),
