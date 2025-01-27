@@ -105,6 +105,7 @@ export default defineSchema({
         dealId: v.id("deal"),
         documentType: v.string(),
         file: v.string(),
+        status: v.string(),// Approved, Pending, Declined
     }).searchIndex("by_deal", {
         searchField: "dealId",
     }),

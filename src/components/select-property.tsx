@@ -24,8 +24,11 @@ export const SelectProperTy = ({
         if (properties && properties.length > 0 && !defaultValue) {
             onPropertySelect(properties[0]._id)
             setSelectedPropertyId(properties[0]._id)
+        } else {
+            onPropertySelect(null)
+            setSelectedPropertyId(null)
         }
-    }, [properties, defaultValue, onPropertySelect, setSelectedPropertyId])
+    }, [properties, defaultValue, onPropertySelect, setSelectedPropertyId, selectedProjectId])
 
     if (!properties) {
         return <div>Loading...</div>;

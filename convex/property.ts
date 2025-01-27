@@ -39,7 +39,6 @@ export const getUserProperty = query({
    
         if (args.projectId) {
             const prjectProperty = filteredProperties.filter((property) => property.projectId === args.projectId);
-            console.log(prjectProperty)
             return prjectProperty;
         }
 

@@ -69,7 +69,7 @@ export const buyerSidebarItems: SidebarItem[] = [
     {
         icon: LayoutGrid,
         label: "Dashboard",
-        href: "/buyer",
+        href: "/buyer/owned-properties",
     },
     {
         icon: FilePenLine,

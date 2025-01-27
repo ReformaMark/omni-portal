@@ -17,7 +17,7 @@ export function RoleCheck() {
                     router.push("/admin")
                     break
                 case "buyer":
-                    router.push("/buyer") // to change dipende kay reforma
+                    router.push("/buyer/owned-properties") // to change dipende kay reforma // na change na 
                     break
                 case "seller":
                     router.push("/seller") // to change dipende kay reforma

@@ -13,8 +13,8 @@ function StatementOfAccountsList() {
 
      const statementOfAccounts = useQuery(api.statementOfAccount.get, {propertyId: selectedPropertyId ?? undefined})
      const property = useQuery(api.deal.getPropertyById, {propertyId: selectedPropertyId ?? undefined})
+     console.log(selectedPropertyId)
 
-     console.log(statementOfAccounts)
 
   return (
     <div>
