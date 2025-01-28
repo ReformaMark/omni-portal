@@ -5,8 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatPrice(value: number | string): string {
-  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+export function formatPrice(value: number | string, decimals: number = 2): string {
+  const numberValue = typeof value === "string" ? parseFloat(value) : value;
+  if (isNaN(numberValue)) return "Invalid number";
+  return numberValue.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export function generateBuyerId(): string {
@@ -74,4 +76,17 @@ export function formatDate(convexDate: number) {
 
   // Format as M/D/YYYY
   return `${month}/${day}/${year}`;
+}
+
+export function formatDateVerbose(convexDate: number) {
+  const roundedTimestamp = Math.floor(convexDate);
+  const readableDate = new Date(roundedTimestamp);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+
+  return readableDate.toLocaleDateString('en-US', options);
 }

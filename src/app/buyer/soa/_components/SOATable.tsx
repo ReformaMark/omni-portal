@@ -13,17 +13,17 @@ export const soaColumns: ColumnDef<Doc<'statementOfAccount'>>[] = []
 
 function SOATable({data}: SOATableProps) {
   return (
-    <div> 
-        <div className="grid grid-cols-5 items-center bg-[#EDEDED] py-1 md:py-2">
-            <h1 className='uppercase text-[0.6rem] lg:text-sm xl:text-lg font-semibold text-[#888888] text-center'>Date</h1>
-            <h1 className='uppercase text-[0.6rem] lg:text-sm xl:text-lg font-semibold text-[#888888] text-center'>Particulars</h1>
-            <h1 className='uppercase text-[0.6rem] lg:text-sm xl:text-lg font-semibold text-[#888888] text-center'>Mode of Payment</h1>
-            <h1 className='uppercase text-[0.6rem] lg:text-sm xl:text-lg font-semibold text-[#888888] text-center'>Balance</h1>
-            <h1 className='uppercase text-[0.6rem] lg:text-sm xl:text-lg font-semibold text-[#888888] text-center'>Amount</h1>
+    <div > 
+        <div className="grid grid-cols-5 items-center bg-[#EDEDED] py-2 md:py-2 shadow-md">
+            <h1 className='uppercase text-[0.5rem] lg:text-sm xl:text-lg font-semibold text-[#888888] text-center'>Date</h1>
+            <h1 className='uppercase text-[0.5rem] lg:text-sm xl:text-lg font-semibold text-[#888888] text-center'>Particulars</h1>
+            <h1 className='uppercase text-[0.5rem] lg:text-sm xl:text-lg font-semibold text-[#888888] text-center'>Mode of Payment</h1>
+            <h1 className='uppercase text-[0.5rem] lg:text-sm xl:text-lg font-semibold text-[#888888] text-center'>Balance</h1>
+            <h1 className='uppercase text-[0.5rem] lg:text-sm xl:text-lg font-semibold text-[#888888] text-center'>Amount</h1>
         </div>
         <div className="space-y-2">
             {data ? data.length > 0 ? data.map((soa)=>(
-                <Card key={soa._id} className='bg-[#FFFFFF] rounded-sm'>
+                <Card key={soa._id} className='bg-[#FFFFFF] rounded-sm shadow-sm'>
                     <div className='grid grid-cols-5 items-center text-[0.6rem] text-[#4d4f51] lg:text-sm xl:text-lgtext-center p-0 py-3 md:py-3'>
                         <p>{formatDate(soa._creationTime)}</p>
                         <p>{soa.particulars}</p>

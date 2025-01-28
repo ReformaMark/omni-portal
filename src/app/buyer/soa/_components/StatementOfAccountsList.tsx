@@ -3,36 +3,62 @@ import { usePropertyStore } from '@/store/property-store'
 import { useQuery } from 'convex/react'
 import React from 'react'
 import { api } from '../../../../../convex/_generated/api'
-import { formatPrice } from '@/lib/utils'
+import { formatDateVerbose, formatPrice } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {  Printer } from 'lucide-react'
 import SOATable from './SOATable'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
 function StatementOfAccountsList() {
      const selectedPropertyId = usePropertyStore(state => state.selectedPropertyId)
 
      const statementOfAccounts = useQuery(api.statementOfAccount.get, {propertyId: selectedPropertyId ?? undefined})
      const property = useQuery(api.deal.getPropertyById, {propertyId: selectedPropertyId ?? undefined})
-     console.log(selectedPropertyId)
 
+    const totalAmountPaid = statementOfAccounts?.reduce((total, account) => total + account.totalAmountPaid, 0) ?? 0;
+    const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })
 
+    const totals = [
+        {
+            title: 'Total Amount Paid',
+            value: totalAmountPaid,
+            data: statementOfAccounts
+        },
+        {
+            title: 'Total Selling Price',
+            value: property?.dealPrice,
+            data: statementOfAccounts
+        },
+        {
+            title: 'Total Outstanding Balance',
+            value: statementOfAccounts && statementOfAccounts.length > 1 ?  statementOfAccounts[0]?.remainingBalance : property?.dealPrice,
+            data: statementOfAccounts
+        }
+    ]
   return (
     <div>
-        <div className="grid grid-cols-3 justify-between items-center mb-3">
-            <h3 className='text-[0.6rem] text-center md:text-left lg:text-[1rem] xl:text-lg font-poppins font-semibold uppercase text-[#A1A7AE]'>TOTAL SELLING PRICE: <span className='md:ml-3 text-black text-lg xl:text-xl'>₱{formatPrice(property?.dealPrice ?? 0)}</span></h3>
-            <h3 className='text-[0.6rem] text-right md:text-left lg:text-[1rem] xl:text-lg font-poppins font-semibold uppercase text-[#A1A7AE]'>MONTHLY AMORTIZATION: <span className='text-right md:text-left md:ml-3 text-black text-lg xl:text-xl'>₱{formatPrice(property?.monthlyAmortization ?? 0)}</span></h3>
-            <div className="flex justify-end">
-                <Button
-                    variant="default"
-                    className="rounded-md max-md:w-[25%] md:w-fit"
-                    onClick={() => {}}
-                    >
-                    <Printer />
-                    <span className="hidden md:block">
-                        Print SOA
-                    </span>
-                </Button>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-10 gap-y-3 px-5 justify-between items-center mb-10">
+            {totals.map((total, index) => (
+                <Card  key={total.title} className='p-0 rounded-3xl shadow-lg'>
+                 <CardHeader>
+                     <CardTitle className='text-xs lg:text-[0.8rem] font-extralight'>{total.title}</CardTitle>
+                 </CardHeader>
+                 <CardContent>
+                     <h1 className='text-black text-xl md:text-xl lg:text-2xl font-medium'>
+                        {total.value ? (<span>₱ {formatPrice(total.value ?? 0).split('.')[0]}</span>) : "-"}
+                        {total.value ? (<span className='text-[#D9D9D9]'>.{formatPrice(totalAmountPaid).split('.')[1]}</span>) : ""}
+                     </h1>
+                 </CardContent>
+                 <CardFooter className='bg-[#F7F8F9] flex flex-row py-3 items-center w-full rounded-b-3xl'>
+                    {index === 1 ? (
+                        <h4 className='text-[#828C98] text-xs lg:text-sm my-auto '>Block {property?.property?.block} Lot {property?.property?.lot}</h4>
+                    ) : (
+
+                     <h4 className='text-[#828C98] text-xs lg:text-sm'>As of {statementOfAccounts && statementOfAccounts?.length < 1 ? <span className='text-black'>{currentDate}</span> : (<span className='text-black'>{formatDateVerbose(statementOfAccounts ? statementOfAccounts.length < 1 ? 0 : statementOfAccounts[0]._creationTime : 0)}</span>) }</h4>
+                    )}
+                 </CardFooter>
+             </Card>
+            ))}
         </div>
         <SOATable data={statementOfAccounts ?? []}/>
     </div>
