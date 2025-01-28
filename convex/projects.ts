@@ -154,9 +154,10 @@ export const remove = mutation({
 
 export const getById = query({
     args: {
-        id: v.id("project")
+        id: v.optional(v.id("project"))
     },
     handler: async (ctx, args) => {
+        if(args.id === undefined) return null;
         return await ctx.db.get(args.id);
     },
 });

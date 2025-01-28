@@ -33,12 +33,16 @@ export const getByUser = query({
                 totalAmountPaid += p.totalAmountPaid
                 remainingBalance -= p.remainingBalance
             })
+            const seller = await ctx.db.get(deal.sellerId)
+            const buyer = await ctx.db.get(deal.buyerId)
 
             return {
                 ...deal,
                 property: property,
+                buyer: buyer,
+                seller: seller,
                 monthlyPayments: monthlyPaymentTransactions, //includes the downpayment
-                downPayment: paymentCount,
+                paymentCount: paymentCount,
                 totalAmountPaid: totalAmountPaid,
                 remainingBalance: remainingBalance
             }

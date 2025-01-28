@@ -8,11 +8,12 @@ import Loading from '@/components/loading'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Image from 'next/image'
 import Transaction from '@/../public/transaction-minus.svg'
-import SMSEdit from '@/../public/sms-edit.png'
+
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
 import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart"
 import { PieChart, Pie } from 'recharts';
+import ContactAgent from './ContactAgent'
 
 function OwnedProperties() {
    const selectedProjectId = useProjectStore(state => state.selectedProjectId)
@@ -75,12 +76,11 @@ function OwnedProperties() {
                     <CardHeader className='flex flex-row items-center justify-between'>
                         <CardTitle className='text-xl text-black' >Block {deal.property?.block} Lot {deal.property?.lot}</CardTitle>
                         <div className="flex gap-x-3">
+                            
                             <Link href={'#'} className='p-0'>
                                 <Image src={Transaction} alt='svg image' className='size-4 cursor-pointer'/>
                             </Link>
-                            <Link href={'#'} className='p-0'>
-                                <Image src={SMSEdit} alt='SMSEdit image' className='size-4 cursor-pointer'/>
-                            </Link>
+                            <ContactAgent data={deal} projectId={selectedProjectId}/>
                         </div>
                     </CardHeader>
                     <CardContent className='grid grid-cols-3 '>
@@ -136,8 +136,8 @@ function OwnedProperties() {
                         <div className="grid grid-cols-2 gap-x-1 items-center lg:gap-x-3  px-2 md:px-5 lg:px-10 ">
                             <div className="grid items-center h-full">
                                 <h3 className='text-xs text-[#4D4F51] font-extralight '>Amount Paid</h3>
-                                <h1 className='font-medium text-2xl text-black mt-2 mb-1'>&#8369;{formatPrice(deal.downPayment.paid ?? 0)}</h1>
-                                <p className='text-[0.6rem] text-[#888888]'>&#8369;{formatPrice( deal.downPayment.unPaid ?? 0)} still to be paid</p>
+                                <h1 className='font-medium text-2xl text-black mt-2 mb-1'>&#8369;{formatPrice(deal.paymentCount.paid ?? 0)}</h1>
+                                <p className='text-[0.6rem] text-[#888888]'>&#8369;{formatPrice( deal.paymentCount.unPaid ?? 0)} still to be paid</p>
                             </div>
                         
                             <ChartContainer config={chartConfig} className="self-center relative mx-auto size-16 md:size-20 lg:size-24 ">
@@ -159,8 +159,8 @@ function OwnedProperties() {
                                         />
                                     <Pie
                                     data={[
-                                        { name: "Paid", value: deal.downPayment.paid ?? 0, fill: "url(#gradientPaid)" },
-                                        { name: "Unpaid", value: deal.downPayment.unPaid ?? 0 ,fill: "url(#gradientUnpaid)" },
+                                        { name: "Paid", value: deal.paymentCount.paid ?? 0, fill: "url(#gradientPaid)" },
+                                        { name: "Unpaid", value: deal.paymentCount.unPaid ?? 0 ,fill: "url(#gradientUnpaid)" },
                                     ]}
                                         innerRadius={innerRadius}
                                 
