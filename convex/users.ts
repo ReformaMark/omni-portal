@@ -253,3 +253,14 @@ export const updateSeller = mutation({
         return await ctx.db.get(id);
     },
 });
+
+export const getUserById = query({
+    args: {
+        buyerId: v.id("users"),
+    },
+    handler: async (ctx, args) => {
+        const user = await ctx.db.get(args.buyerId)
+
+        return user
+    }
+})

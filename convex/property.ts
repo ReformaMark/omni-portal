@@ -25,18 +25,18 @@ export const getUserProperty = query({
     },
     handler: async (ctx, args) => {
         const userId = await getAuthUserId(ctx)
-        if(!userId) throw new ConvexError('No userId found.')
+        if (!userId) throw new ConvexError('No userId found.')
 
-        const deals = await ctx.db.query('deal').withIndex("by_buyerId", (q)=> q.eq("buyerId", userId)).collect()
+        const deals = await ctx.db.query('deal').withIndex("by_buyerId", (q) => q.eq("buyerId", userId)).collect()
 
-        let properties = await asyncMap(deals, async(d)=>{
+        let properties = await asyncMap(deals, async (d) => {
             const property = await ctx.db.get(d.propertyId)
 
             return property
         })
 
         const filteredProperties = properties.filter((property) => property !== null)
-   
+
         if (args.projectId) {
             const prjectProperty = filteredProperties.filter((property) => property.projectId === args.projectId);
             return prjectProperty;
@@ -224,3 +224,13 @@ export const getStats = query({
     }
 })
 
+export const getPropertyById = query({
+    args: {
+        propertyId: v.id("property"),
+    },
+    handler: async(ctx, args) => {
+        const property = await ctx.db.get(args.propertyId)
+
+        return property
+    }
+})

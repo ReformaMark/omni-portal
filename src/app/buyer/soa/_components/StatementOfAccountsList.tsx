@@ -1,13 +1,10 @@
 'use client'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { formatDateVerbose, formatPrice } from '@/lib/utils'
 import { usePropertyStore } from '@/store/property-store'
 import { useQuery } from 'convex/react'
-import React from 'react'
 import { api } from '../../../../../convex/_generated/api'
-import { formatDateVerbose, formatPrice } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import {  Printer } from 'lucide-react'
 import SOATable from './SOATable'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
 function StatementOfAccountsList() {
      const selectedPropertyId = usePropertyStore(state => state.selectedPropertyId)
