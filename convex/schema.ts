@@ -108,4 +108,14 @@ export default defineSchema({
         searchField: "dealId",
     }),
 
+    inquiries: defineTable({
+        buyerId: v.id("users"),
+        sellerId: v.id("users"),
+        propertyId: v.id("property"),
+        subject: v.string(),
+        message: v.string(),
+        response: v.optional(v.string()),
+        respondedAt: v.optional(v.number()),
+    })
+
 })
