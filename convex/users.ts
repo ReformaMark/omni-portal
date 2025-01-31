@@ -253,3 +253,15 @@ export const updateSeller = mutation({
         return await ctx.db.get(id);
     },
 });
+
+export const userById = query({
+   
+    handler: async (ctx) => {
+        const userId = await getAuthUserId(ctx);
+        if (!userId) throw new ConvexError("Not authenticated");
+
+        const buyer = await ctx.db.get(userId);
+       
+        return buyer;
+    },
+});

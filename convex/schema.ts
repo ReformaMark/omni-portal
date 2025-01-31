@@ -98,9 +98,7 @@ export default defineSchema({
         remainingBalance: v.number(),
         remainingTerms: v.number(),
     }).index("by_dealId", ['dealId']),
-
-
-
+    
     document: defineTable({
         dealId: v.id("deal"),
         documentType: v.string(),

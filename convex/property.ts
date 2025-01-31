@@ -19,6 +19,22 @@ export const get = query({
     }
 });
 
+export const getPropertyWithSeller = query({
+    args: {
+        projectId: v.optional(v.id("project"))
+    },
+    handler: async (ctx, args) => {
+        let query = ctx.db.query("property");
+
+        if (args.projectId) {
+            query = query.filter((q) => q.eq(q.field("projectId"), args.projectId));
+        }
+
+        const properties = await query.collect();
+        return properties;
+    }
+});
+
 export const getUserProperty = query({
     args: {
         projectId: v.optional(v.id("project"))
