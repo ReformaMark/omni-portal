@@ -4,7 +4,6 @@ import { formatDateVerbose, formatPrice } from '@/lib/utils'
 import { usePropertyStore } from '@/store/property-store'
 import { useQuery } from 'convex/react'
 import { api } from '../../../../../convex/_generated/api'
-import { formatDateVerbose, formatPrice } from '@/lib/utils'
 import SOATable from './SOATable'
 
 function StatementOfAccountsList() {
